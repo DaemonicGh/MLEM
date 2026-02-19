@@ -1,0 +1,39 @@
+
+null =		null
+null2 = 	NuLL
+
+int =		3
+binary =	0b1001
+octal =		0c123
+hex =		0x1A
+
+float =		3.14
+hl_float = 	.127
+tl_float = 	6.
+
+bool_t =	true
+bool_f =	FaLse
+
+wstring =	Hello
+qstring =	'World !'
+safestr =	'[1 2 3]'
+mlstring =	'''Multiline string,
+Look at that'''
+dmlstring =	"Multiline string,
+But with double quotes"
+
+// Comment
+/// Multiline comment,
+fancy ///
+
+array =		[1 2 3 hey]
+array_mt =	[]
+2darray =	[[1 2] [3 4]]
+
+object =	[key1 = value1 key2 = [] key3 = 3.1]
+dobject =	[
+	a = [1 2 3]
+	b = [z = a y = b x = c]
+	c = 'Just c'
+	d = 0.02
+]
