@@ -15,7 +15,7 @@ int	main(int argc, char **argv)
 	char *str;
 
 	str = open_and_read_file(argv[1]);
-	printf("%s", str);
+	mlem_tokenize(str);
 	free(str);
 
 	return (0);
