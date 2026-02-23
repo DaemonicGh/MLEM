@@ -3,71 +3,115 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
+#include <strings.h>
 
 #include "mlem.h"
+#include "mlem_static.h"
 
-// Private header
 
-typedef enum {
-	ERR_EMPTY,
-	ERR_FILE,
-	ERR_MEMORY,
-}	Errors;
-
-typedef struct
-{
-	Token*	tokens;
-	Token	*last;
-	size_t	len;
-	size_t	size;
-}	TokenArray;
-
-// Globals
-
-static const char*	error_messages[] = {
-	"",
-	"Unable to open file",
-	"Memory error"
-};
-
-static const char*	token_triggers[] = {
-	"'''", "///", "\"\"\"",
-	"//", "/*", "*/",
-	"[", "]", "=", "'", "\"",
-	"{", "}", ":", NULL
-};
-
-static const TokenType	token_trigger_values[] = {
-	TK_ML_WORD_DEL, TK_ML_COMMENT_DEL, TK_ML_WORD_DEL,
-	TK_COMMENT, TK_ML_COMMENT_START, TK_ML_COMMENT_END,
-	TK_OPEN_UNKNOWN, TK_CLOSE_UNKNOWN, TK_ASSIGN, TK_WORD_DEL, TK_ML_WORD_DEL,
-	TK_OPEN_OBJECT, TK_CLOSE_OBJECT, TK_ASSIGN, TK_NULL
-};
-
-static const char* token_trigger_ends[] ={
-	"'''", "///", "\"\"\"",
-	"\n", "*/", NULL,
-	NULL, NULL, NULL, "'", "\"",
-	NULL, NULL, NULL, NULL
-};
-
-static const char*	skip_triggers[] = {
-	" ", "\t", "\n", ",", NULL
-};
-
-static const char*	token_repr[] = {
-	"N", "W", "[", "]", "'", "\"", "//", "///", "/*", "*/",
-	"K", "V", "=", "(", ")", "{", "}", NULL
-};
-
-// Utils
-
-static inline void	error(Errors type)
+static inline void
+error(mlem_errors type)
 {
 	fprintf(stderr, "MLEM: %s\n", error_messages[type]);
 }
 
-static size_t	streq(const char* s1, const char* s2)
+static void
+print_token(mlem_token_type token)
+{
+	size_t	i = (token != 0);
+
+	for (; token > 1; i++)
+		token >>= 1;
+	printf("%s", token_repr[i]);
+}
+
+// Dynamic Array/Object Methods
+
+static mlem_structure
+DS_new(size_t ele_size)
+{
+	mlem_structure	ds	= {0};
+
+	ds.data	= malloc((DS_BASE_CAPACITY + 1) * ele_size);
+	if (!ds.data)
+	{
+		error(ERR_MEMORY);
+		return (ds);
+	}
+	bzero(ds.data, ele_size);
+	ds.len		= 0;
+	ds.capacity	= DS_BASE_CAPACITY;
+	ds.span		= ele_size;
+	return (ds);
+}
+
+static inline mlem_array
+DA_new(void)
+{
+	return (DS_new(sizeof(mlem_value)).array);
+}
+
+static inline mlem_object
+DO_new(void)
+{
+	return (DS_new(sizeof(mlem_pair)).object);
+}
+
+static bool
+DS_grow(mlem_structure *ds)
+{
+	const size_t	new_capacity = ds->capacity * DS_GROW_RATIO;
+	void*			tmp;
+
+	tmp = reallocarray(ds->data, new_capacity + 1, ds->span);
+	if (!tmp)
+	{
+		error(ERR_MEMORY);
+		return (false);
+	}
+
+	ds->data 		= tmp;
+	ds->capacity	= new_capacity;
+	return (true);
+}
+
+static bool
+DA_append(mlem_array *array, mlem_value ele)
+{
+	mlem_structure	*structure	= (mlem_structure *)array;
+
+	if (array->len == array->capacity && !DS_grow(structure))
+		return (false);
+
+	array->data[array->len++]				= ele;
+	array->data[array->len]					= MLEM_NULL_VALUE;
+	return (true);
+}
+
+static bool
+DO_append(mlem_object *object, mlem_pair ele)
+{
+	mlem_structure	*structure = (mlem_structure *)object;
+
+	if (object->len == object->capacity && !DS_grow(structure))
+		return (false);
+
+	object->data[object->len++]				= ele;
+	object->data[object->len]				= MLEM_NULL_PAIR;
+	return (true);
+}
+
+static void
+DS_destroy(mlem_structure *ds)
+{
+	free(ds->data);
+	*ds = (mlem_structure){0};
+}
+
+// Utils
+
+static size_t
+streq(const char* s1, const char* s2)
 {
 	size_t	i;
 
@@ -77,7 +121,8 @@ static size_t	streq(const char* s1, const char* s2)
 	return (i);
 }
 
-static size_t	streq_list(const char* s, const char** sa)
+static size_t
+streq_list(const char* s, const char** sa)
 {
 	size_t	i;
 
@@ -86,10 +131,11 @@ static size_t	streq_list(const char* s, const char** sa)
 		if (streq(s, sa[i]))
 			return (i);
 	}
-	return (-1);
+	return (ST_N1);
 }
 
-static const char*	strchr_bs(const char *s, char c)
+static const char*
+strchr_bs(const char *s, char c)
 {
 	for (; *s && *s != c; s++)
 	{
@@ -101,7 +147,8 @@ static const char*	strchr_bs(const char *s, char c)
 	return (NULL);
 }
 
-static const char*	strstr_bs(const char *s1, const char *s2)
+static const char*
+strstr_bs(const char *s1, const char *s2)
 {
 	for (; (s1 = strchr_bs(s1, *s2)); s1++)
 	{
@@ -111,46 +158,54 @@ static const char*	strstr_bs(const char *s1, const char *s2)
 	return (0);
 }
 
-static void	print_token(Token *token)
+static inline mlem_context
+context_at_token(mlem_context *mlem, mlem_token *token)
 {
-	printf("%s", token_repr[token->type]);
+	return ((mlem_context){
+		.content = token->val, .settings = mlem->settings,
+		.line = token->line, .column = token->column, .depth = token->depth
+	});
 }
 
 //
 
-static bool	move_forward(const char* *content, size_t *line, size_t *column, size_t amount)
+static bool
+move_forward(mlem_context *mlem, size_t amount)
 {
-	while (amount-- && **content)
+	while (amount-- && *mlem->content)
 	{
-		if (**content == '\n')
+		if (*mlem->content == '\n')
 		{
-			(*line)++;
-			*column = 0;
+			mlem->line++;
+			mlem->column = 0;
 		}
-		(*content)++;
-		(*column)++;
+		mlem->content++;
+		mlem->column++;
 	}
-	return (**content);
+	return (*mlem->content);
 }
 
-static void	move_past_blank(const char* *content, size_t *line, size_t *column)
+static bool
+move_past_blank(mlem_context *mlem)
 {
 	size_t		match_i;
 
-	while ((match_i = streq_list(*content, skip_triggers)) != (size_t)-1)
-		move_forward(content, line, column, strlen(skip_triggers[match_i]));
+	while ((match_i = streq_list(mlem->content, skip_triggers)) != ST_N1)
+		move_forward(mlem, strlen(skip_triggers[match_i]));
+	return (*mlem->content);
 }
 
-static void	move_past_statement(Token *token, const char* *content, size_t *line, size_t *column)
+static void
+move_past_statement(mlem_context *mlem, mlem_token *token)
 {
 	size_t 			i = 1;
 
 	if (token->type == TK_WORD)
 	{
-		while (streq_list((*content) + i, token_triggers) == (size_t)-1
-			&& !isspace((*content)[i]))
+		while (streq_list((mlem->content) + i, token_triggers) == ST_N1
+			&& !isspace((mlem->content)[i]))
 			i++;
-		move_forward(content, line, column, i);
+		move_forward(mlem, i);
 		return ;
 	}
 
@@ -158,64 +213,156 @@ static void	move_past_statement(Token *token, const char* *content, size_t *line
 
 	for (i = 0; token_triggers[i]; i++)
 	{
-		if (!token_trigger_ends[i] || token_triggers[i] != token->trigger)
+		if (token_triggers[i] != token->trigger)
 			continue ;
-		move_forward(content, line, column,
-			strstr_bs(*content + len, token_trigger_ends[i])
-			+ strlen(token_trigger_ends[i]) - *content);
+		if (!token_trigger_ends[i])
+			break ;
+		move_forward(mlem, strstr_bs(mlem->content + len, token_trigger_ends[i])
+			+ strlen(token_trigger_ends[i]) - mlem->content);
 		return ;
 	}
-	move_forward(content, line, column, len);
+	move_forward(mlem, len);
 }
 
-static Token	mlem_get_next_token(const char* *content, size_t *line, size_t *column)
+static mlem_token
+get_next_token(mlem_context *mlem)
 {
+	mlem_token	token;
 	size_t		match_i;
-	Token		token = (Token){
-		.line = *line,
-		.column = *column,
-		.val = *content
-	};
 
-	match_i = streq_list(*content, token_triggers);
-	token.trigger = token_triggers[match_i];
-	if (match_i != (size_t)-1)
+	do
 	{
-		token.type = token_trigger_values[match_i];
-		return (token);
-	}
-	token.type = TK_WORD;
+		move_past_blank(mlem);
+
+		token = (mlem_token){
+			.line = mlem->line, .column = mlem->column, .depth = mlem->depth,
+			.val = mlem->content, .type = TK_NULL
+		};
+		if (!(*token.val))
+			break ;
+
+		match_i = streq_list(mlem->content, token_triggers);
+		token.trigger = token_triggers[match_i];
+		if (match_i != ST_N1)
+			token.type = token_trigger_values[match_i];
+		else
+			token.type = TK_WORD;
+
+		move_past_statement(mlem, &token);
+		token.len = mlem->content - token.val;
+
+	}	while (token.type & ~TKG_SIGNIFICANT);
 	return (token);
 }
 
-Token*	mlem_tokenize(const char* content)
+static mlem_value
+parse_array(mlem_context *mlem, mlem_token *trigger_token)
 {
-	Token	token;
-	size_t	line	= 1;
-	size_t	column	= 1;
+	mlem_array	array = DA_new();
+	mlem_token	token;
 
-	while (*content)
+	if (!array.data)
+		return (MLEM_NULL_VALUE);
+	do
 	{
-		move_past_blank(&content, &line, &column);
-		if (!*content)
+		printf("Token is : ");
+		token = get_next_token(mlem);
+		print_token(token.type);
+		printf(" at %p\n", token.val);
+		if (!token.type)
 			break ;
-		token = mlem_get_next_token(&content, &line, &column);
-		print_token(&token);
-		printf(": %.*s\n", (int)strcspn(token.val, "\n=[]"), token.val);
-		if (token.type == TK_NULL)
-			break ;
-		move_past_statement(&token, &content, &line, &column);
+		if (token.type & TK_WORD)
+			DA_append(&array, (mlem_value){.type = TYPE_STRING, ._string = strndup(token.val, token.len)});
+		else if (token.type & TKG_OPEN)
+			DA_append(&array, parse_structure(mlem, &token));
+	}	while (token.type & ~TKG_CLOSE);
+	if (token.type && trigger_token->type & ~(token.type >> 1))
+	{
+		error(ERR_WRONG_STRUCTURE_CLOSE);
+		return (MLEM_NULL_VALUE);
 	}
-	return (NULL);
+	return ((mlem_value){.type = TYPE_ARRAY, ._array = array.data});
 }
 
-mlem_value	mlem_parse(const char* content)
+static mlem_token_type
+get_structure_type(mlem_context *mlem)
 {
-	(void)content;
-	return (MLEM_NULL_VALUE);
+	mlem_context	mlem_sp	= *mlem;
+	mlem_token		token;
+
+	token = get_next_token(&mlem_sp);
+	if (token.type & (TKG_CLOSE | TKG_OPEN))
+		return (TK_OPEN_ARRAY);
+	if (token.type & ~TK_WORD)
+	{
+		error(ERR_UNEXPECTED_TOKEN);
+		return (TK_NULL);
+	}
+
+	token = get_next_token(&mlem_sp);
+	if (!token.type)
+	{
+		error(ERR_UNCLOSED_STRUCTURE);
+		return (TK_NULL);
+	}
+	if (token.type & TK_ASSIGN)
+		return (TK_OPEN_OBJECT);
+	return (TK_OPEN_ARRAY);
 }
 
-char*	open_and_read_file(const char *filename)
+static mlem_value
+parse_structure(mlem_context *mlem, mlem_token *trigger_token)
+{
+	mlem_token_type	trigger_type	= trigger_token->type;
+	mlem_value		structure		= MLEM_NULL_VALUE;
+
+	if (trigger_token->type & TK_OPEN_UNKNOWN)
+		trigger_type = get_structure_type(mlem);
+
+	if (trigger_type & TK_OPEN_ARRAY)
+		structure = parse_array(mlem, trigger_token);
+	//else if (trigger_type & TK_OPEN_OBJECT)
+	//	structure = parse_object(mlem, trigger_token);
+	else
+		error(ERR_UNEXPECTED_ERROR);
+	return (structure);
+}
+
+static void
+parse_start(mlem_context *mlem)
+{
+	(void)mlem;
+	return ;
+}
+
+static mlem_context
+init_context(char* content, mlem_parser_settings settings)
+{
+	mlem_context	mlem = {
+		.line = 1, .column = 1, .depth = 0,
+		.content = content, .settings = settings
+	};
+	return (mlem);
+}
+
+mlem_value
+mlem_parse(char* content, mlem_parser_settings settings)
+{
+	mlem_token			start_token = {.type = TK_OPEN_UNKNOWN, .trigger = token_triggers[6]};
+	mlem_context		mlem;
+	mlem_value			structure;
+
+	mlem = init_context(content, settings);
+	if (!mlem.content)
+		return (MLEM_NULL_VALUE);
+	parse_start(&mlem);
+	printf("Starting parsing\n");
+	structure = parse_structure(&mlem, &start_token);
+	return (structure);
+}
+
+static char*
+open_and_read_file(const char *filename)
 {
 	FILE	*file;
 	char	*content;
@@ -246,12 +393,17 @@ char*	open_and_read_file(const char *filename)
 	return (content);
 }
 
-mlem_value	mlem_parse_file(const char *filename)
+mlem_value
+mlem_parse_file(const char *filename, mlem_parser_settings settings)
 {
-	char*	str;
+	mlem_value	value;
+	char*		str;
 
 	str = open_and_read_file(filename);
 	if (!str)
 		return (MLEM_NULL_VALUE);
-	return (mlem_parse(str));
+	printf("Read File\n");
+	value = mlem_parse(str, settings);
+	//free(str);
+	return (value);
 }
