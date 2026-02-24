@@ -11,6 +11,8 @@ get_structure_type(mlem_context *mlem)
 	mlem_token		token;
 
 	token = get_next_token(&mlem_sp);
+	if (!token.type)
+		return (TK_NULL);
 	if (token.type & (TKG_CLOSE | TKG_OPEN))
 		return (TK_OPEN_ARRAY);
 	if (token.type & ~TK_WORD)
@@ -21,6 +23,8 @@ get_structure_type(mlem_context *mlem)
 
 	token = get_next_token(&mlem_sp);
 	if (!token.type)
+		return (TK_NULL);
+	if (mlem->depth == 0 && !*mlem_sp.content)
 	{
 		error(mlem, ERR_UNCLOSED_STRUCTURE);
 		return (TK_NULL);
@@ -44,7 +48,7 @@ parse_structure(mlem_context *mlem, mlem_token *trigger_token)
 		structure = parse_array(mlem, trigger_token);
 	//if (trigger_type & TK_OPEN_OBJECT)
 	//	structure = parse_object(mlem, trigger_token);
-	else
+	else if (trigger_type)
 		error(mlem, ERR_UNEXPECTED_ERROR);
 	mlem->depth--;
 	return (structure);

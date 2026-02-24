@@ -1,5 +1,4 @@
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -44,7 +43,8 @@ append_value(mlem_context *mlem, mlem_array *array, mlem_token *token)
 static mlem_value
 send_array(mlem_array *array)
 {
-	DS_resize((mlem_structure *)array, array->len);
+	if (array->len + DS_CROP_THRESHOLD < array->capacity)
+		DS_resize((mlem_structure *)array, array->len);
 	return ((mlem_value){.type = TYPE_ARRAY, .val_array = array->data});
 }
 

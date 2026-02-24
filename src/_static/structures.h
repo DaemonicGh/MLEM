@@ -5,6 +5,7 @@
 
 #define DS_BASE_CAPACITY	4
 #define DS_GROW_RATIO		2.0
+#define DS_CROP_THRESHOLD	16
 
 #define DA_VALUE_SIZE		sizeof(mlem_value)
 #define DO_VALUE_SIZE		sizeof(mlem_pair)
