@@ -19,10 +19,8 @@ COMMON_FILES			:=	\
 	errors/error																\
 	parsing/array parsing/file parsing/object parsing/parse parsing/start 		\
 	parsing/structure															\
-	parsing/tokenizer/get_token parsing/tokenizer/move							\
-	parsing/tokenizer/move_token parsing/tokenizer/trigger						\
-	structures/da structures/do structures/ds									\
-	methods/token methods/value													\
+	parsing/tokenizer/get_token parsing/tokenizer/move parsing/tokenizer/trigger\
+	methods/token methods/value methods/da methods/do methods/ds				\
 	utils/strchr_bs utils/streq
 
 LOCAL_LIBRARIES			:=

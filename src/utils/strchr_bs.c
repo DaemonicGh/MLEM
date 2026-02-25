@@ -4,7 +4,7 @@
 const char *
 skip_potential_backslash(const char *s)
 {
-	if (*s == '\\')
+	if (*s == '\\' && *(s + 1))
 		return (++s);
 	return (s);
 }

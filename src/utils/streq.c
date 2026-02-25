@@ -1,5 +1,6 @@
 
 #include <string.h>
+#include <stdio.h>
 
 #include "utils.h"
 
@@ -15,27 +16,8 @@ streq(const char *s1, const char *s2)
 	return (i);
 }
 
-const char
-*multistreq(const char *s, const char *ms)
-{
-	size_t	i;
-
-	while (*s && *ms)
-	{
-		i = 0;
-		while (s[i] && s[i] == ms[i] && ms[i] != ' ')
-			i++;
-		if (!ms[i] || ms[i] == ' ')
-			return (ms);
-		while (s[i] && ms[i] && ms[i] != ' ')
-			i++;
-		ms += i + (ms[i] == ' ');
-	}
-	return (NULL);
-}
-
 size_t
-streq_list(const char *s, const char* *sa)
+streq_list(const char *s, const char **sa)
 {
 	size_t	i;
 

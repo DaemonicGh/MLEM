@@ -1,4 +1,6 @@
 
+#include <stdio.h>
+
 #include "mlem.h"
 #include "parser.h"
 #include "tokens.h"
@@ -15,7 +17,7 @@ get_structure_type(mlem_context *mlem)
 		return (TK_NULL);
 	if (token.type & (TKG_CLOSE | TKG_OPEN))
 		return (TK_OPEN_ARRAY);
-	if (token.type & ~TK_WORD)
+	if (token.type & ~TKG_WORD)
 	{
 		error(mlem, ERR_UNEXPECTED_TOKEN);
 		return (TK_NULL);
@@ -24,11 +26,6 @@ get_structure_type(mlem_context *mlem)
 	token = get_next_token(&mlem_sp);
 	if (!token.type)
 		return (TK_NULL);
-	if (mlem->depth == 0 && !*mlem_sp.content)
-	{
-		error(mlem, ERR_UNCLOSED_STRUCTURE);
-		return (TK_NULL);
-	}
 	if (token.type & TK_ASSIGN)
 		return (TK_OPEN_OBJECT);
 	return (TK_OPEN_ARRAY);
@@ -42,7 +39,11 @@ parse_structure(mlem_context *mlem, mlem_token *trigger_token)
 
 	mlem->depth++;
 	if (trigger_token->type & TK_OPEN_UNKNOWN)
+	{
+		printf("(\n");
 		trigger_type = get_structure_type(mlem);
+		printf(")\n");
+	}
 
 	if (trigger_type & TK_OPEN_ARRAY)
 		structure = parse_array(mlem, trigger_token);

@@ -11,9 +11,6 @@ streq(const char *s1, const char *s2);
 size_t
 streq_list(const char *s, const char* *sa);
 
-const char
-*multistreq(const char *s, const char *ms);
-
 const char *
 skip_potential_backslash(const char *s);
 

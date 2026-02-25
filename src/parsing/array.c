@@ -14,7 +14,7 @@ append_value(mlem_context *mlem, mlem_array *array, mlem_token *token)
 	mlem_value	val;
 
 	do {
-		if (token->type & TK_WORD)
+		if (token->type & TKG_WORD)
 		{
 			val = (mlem_value){
 				.type = TYPE_STRING,
