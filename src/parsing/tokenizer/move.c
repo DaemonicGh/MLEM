@@ -1,9 +1,9 @@
 
-#include <ctype.h>
 #include <string.h>
 #include <stdio.h>
 
 #include "context.h"
+#include "mlem.h"
 #include "tokens.h"
 #include "errors.h"
 #include "utils.h"
@@ -44,13 +44,15 @@ move_past_word(mlem_context *mlem)
 {
 	size_t 			i = 1;
 
-	while (!get_start_trigger(mlem->content + i) && !isspace(mlem->content[i]))
+	while (*(mlem->content + i) &&
+		!get_start_trigger(mlem->content + i) &&
+		streq_list(mlem->content + i, skip_triggers) == ST_N1)
 		i++;
 	move_forward(mlem, i);
 	return (*mlem->content);
 }
 
-void
+bool
 move_past_extend(mlem_context *mlem, mlem_token *token, const char **trigger_str)
 {
 	size_t	end = ST_N1;
@@ -62,12 +64,13 @@ move_past_extend(mlem_context *mlem, mlem_token *token, const char **trigger_str
 				mlem->content + i, (const char **)token->trigger->error
 			) != ST_N1))
 		{
-			error(mlem, ERR_UNCLOSED_SYMBOL);
-			return ;
+			set_error_t(mlem, token, ERR_UNCLOSED_SYMBOL);
+			return (false);
 		}
 		end = streq_list(mlem->content + i, (const char **)token->trigger->end);
 		i = skip_potential_backslash(mlem->content + i) - mlem->content;
 	}
 	*trigger_str = token->trigger->end[end];
 	move_forward(mlem, --i + strlen(*trigger_str));
+	return (true);
 }

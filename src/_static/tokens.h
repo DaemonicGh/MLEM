@@ -5,11 +5,9 @@
 #include <stdbool.h>
 #include "context.h"
 
-#define MLEM_NULL_TOKEN	(mlem_token){0}
-
 typedef enum
 {
-	TK_NULL,
+	TK_NULL				= 0,
 
 	TK_WORD				= 1 << 0,
 
@@ -43,6 +41,11 @@ typedef enum
 	TKG_ML				= TK_ML_DEL_WORD | TK_ML_COMMENT,
 	TKG_WORD_EXTEND		= TK_DEL_WORD | TK_ML_DEL_WORD,
 	TKG_EXTENDS			= TKG_WORD_EXTEND | TKG_COMMENT,
+
+	TKG_ARRAY_VALUE		= TKG_VALUE,
+	TKG_OBJECT_KEY		= TKG_WORD | TKG_CLOSE,
+	TKG_OBJECT_VALUE	= TKG_WORD | TKG_OPEN
+
 }	mlem_token_type_group;
 
 typedef const struct mlem_token_trigger mlem_token_trigger;
@@ -54,6 +57,7 @@ typedef struct {
 	size_t					len;
 }	mlem_token;
 
+#define MLEM_NULL_TOKEN	(mlem_token){0}
 // Triggers
 
 #define MAX_TRIGGER_AMT	3
@@ -78,7 +82,7 @@ static const mlem_token_trigger token_triggers[] =
 	{.type	= TK_OPEN_UNKNOWN,	.start = {"["}},
 	{.type	= TK_CLOSE_UNKNOWN,	.start = {"]"}},
 	{.type	= TK_ASSIGN,		.start = {"="}},
-	{.type	= TK_DEL_WORD,		.start = {"'"},			.end = {"'", "!"},
+	{.type	= TK_DEL_WORD,		.start = {"'"},			.end = {"'"},
 	 .error	= {"\n"}},
 	{.type	= TK_ML_DEL_WORD,	.start = {"\""},		.end = {"\""}},
 	{.type	= TK_OPEN_OBJECT,	.start = {"{"}},
@@ -108,7 +112,7 @@ move_past_blank(mlem_context *mlem);
 bool
 move_past_word(mlem_context *mlem);
 
-void
+bool
 move_past_extend(mlem_context *mlem, mlem_token *token, const char **trigger_str);
 
 mlem_token_trigger

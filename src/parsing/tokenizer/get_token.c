@@ -1,7 +1,7 @@
 
 #include <stdbool.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "context.h"
 #include "errors.h"
@@ -17,10 +17,12 @@ get_token(mlem_context *mlem)
 	if (token.trigger)
 	{
 		token.type = token.trigger->type;
-		move_forward(mlem, strlen(trigger_str));
+		token.val = mlem->content;
+		token.len = strlen(trigger_str);
+		move_forward(mlem, token.len);
+		if (token.type & ~TKG_EXTENDS)
+			return (token);
 	}
-	if (token.trigger && token.type & ~TKG_EXTENDS)
-		return (token);
 
 	token.val = mlem->content;
 	if (token.trigger)
@@ -45,15 +47,15 @@ get_next_token(mlem_context *mlem)
 		if (!(*mlem->content))
 		{
 			if (mlem->depth > 0)
-				error(NULL, ERR_UNCLOSED_STRUCTURE);
+				set_error_l(mlem, ERR_UNCLOSED_STRUCTURE);
 			return (MLEM_NULL_TOKEN);
 		}
 
 		token = get_token(mlem);
 
-		printf("Token = ");
+		printf("\x1B[1mToken = \x1B[0m");
 		print_token(token.type);
-		printf(" %.*s\n", (int)token.len, token.val);
+		printf("\x1B[2m %.*s\x1B[0m\n", (int)token.len, token.val);
 
 		if (!token.type || token.type & TKG_SIGNIFICANT)
 			return (token);

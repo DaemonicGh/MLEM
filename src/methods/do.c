@@ -1,5 +1,6 @@
 
 #include <stdlib.h>
+#include "mlem.h"
 #include "structures.h"
 
 mlem_object
@@ -18,7 +19,7 @@ DO_append(mlem_object *object, mlem_pair ele)
 		return (false);
 
 	object->data[object->len++]				= ele;
-	object->data[object->len]				= MLEM_NULL_PAIR;
+	object->data[object->len]				= (mlem_pair){0};
 	return (true);
 }
 

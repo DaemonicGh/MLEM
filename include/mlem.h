@@ -4,17 +4,33 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-#define MLEM_NULL_VALUE (mlem_value){0}
-#define MLEM_NULL_PAIR	(mlem_pair) {0}
+typedef enum {
+	ERR_NONE,
+
+	ERR_UNEXPECTED_ERROR,
+
+	ERR_FILE,
+	ERR_MEMORY,
+
+	ERR_NULL_INPUT,
+	ERR_UNEXPECTED_TOKEN,
+	ERR_UNCLOSED_SYMBOL,
+	ERR_UNCLOSED_STRUCTURE,
+	ERR_WRONG_STRUCTURE_CLOSE,
+	ERR_ASSIGN_IN_ARRAY,
+	ERR_EXPECTED_ASSIGN,
+	ERR_EXPECTED_VALUE,
+
+}	mlem_error;
 
 typedef enum {
-	TYPE_NULL = 0,
-    TYPE_INT,
-    TYPE_FLOAT,
-    TYPE_STRING,
-    TYPE_BOOL,
-    TYPE_ARRAY,
-    TYPE_OBJECT
+	MLEM_TYPE_NULL = 0,
+    MLEM_TYPE_INT,
+    MLEM_TYPE_FLOAT,
+    MLEM_TYPE_STRING,
+    MLEM_TYPE_BOOL,
+    MLEM_TYPE_ARRAY,
+    MLEM_TYPE_OBJECT
 }	mlem_value_type;
 
 typedef struct mlem_value_s	mlem_value;
@@ -40,6 +56,9 @@ typedef struct mlem_pair_s {
 typedef struct {
 	bool			nothing;
 }	mlem_settings;
+
+#define MLEM_VALUE(t)	(mlem_value){.type = (t)}
+#define MLEM_NULL_VALUE	(mlem_value){0}
 
 // Functions
 

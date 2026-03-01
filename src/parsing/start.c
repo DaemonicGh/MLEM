@@ -1,4 +1,5 @@
 
+#include "mlem.h"
 #include "parser.h"
 
 void
@@ -13,7 +14,8 @@ init_context(char *content, mlem_settings settings)
 {
 	mlem_context	mlem = {
 		.line = 1, .column = 1, .depth = -1,
-		.content = content, .settings = settings
+		.content = content, .settings = settings,
+		.error = ERR_NONE
 	};
 	return (mlem);
 }

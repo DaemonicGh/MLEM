@@ -2,35 +2,30 @@
 #pragma once
 
 #include "context.h"
-
-typedef enum {
-	ERR_EMPTY,
-
-	ERR_UNEXPECTED_ERROR,
-
-	ERR_FILE,
-	ERR_MEMORY,
-
-	ERR_UNEXPECTED_TOKEN,
-	ERR_UNCLOSED_SYMBOL,
-
-	ERR_UNCLOSED_STRUCTURE,
-	ERR_WRONG_STRUCTURE_CLOSE,
-	ERR_ASSIGN_IN_ARRAY,
-
-}	mlem_errors;
+#include "tokens.h"
 
 static const char	*error_messages[] = {
 	"",
 	"Unexpected error",
 	"Unable to open file",
 	"Memory error",
+	"Given string is null",
 	"Unexpected token",
 	"Unclosed symbol",
 	"Unclosed structure",
 	"Incorrect closing symbol",
-	"Object assignment in array"
+	"Object assignment in array",
+	"Expected assignment symbol",
+	"Expected value"
 };
 
-void
-error(mlem_context *mlem, mlem_errors type);
+#define MLEM_ERROR_VALUE(err)	(mlem_value){.type = MLEM_TYPE_NULL, .val_int = (err)}
+
+mlem_error
+set_error(mlem_error type);
+
+mlem_error
+set_error_l(mlem_context *mlem, mlem_error type);
+
+mlem_error
+set_error_t(mlem_context *mlem, mlem_token *token, mlem_error type);
