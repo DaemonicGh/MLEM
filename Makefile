@@ -13,7 +13,7 @@
 
 # ***** PROJECT ***************
 
-NAMES					:=	libmlem.a
+NAMES					:=	libmlem.a libmlem.so
 
 COMMON_FILES			:=	\
 	errors/error																\
@@ -147,9 +147,9 @@ ifneq ($(sanitize),0)
 	SUCCESS_MESSAGE		+=	$(SANITIZE_SUCCESS_MESSAGE)
 endif
 
-ifeq ($(call is_shared,$(NAMES)), $(NAMES))
+ifneq ($(call is_shared,$(NAMES)), $(NAMES))
     COMPILER_FLAGS		+=	$(SHARED_COMPILER_FLAGS)
-else ifeq ($(call is_static,$(NAMES)), $(NAMES))
+else ifneq ($(call is_static,$(NAMES)), $(NAMES))
     COMPILER_FLAGS		+=	$(STATIC_COMPILER_FLAGS)
 else
     COMPILER_FLAGS		+=	$(PROGRAM_COMPILER_FLAGS)
@@ -193,7 +193,8 @@ fclean: clean
 re: fclean all
 
 dist:
-	$(MAKE) debug=0 sanitize=0 re clean
+	$(MAKE) debug=0 sanitize=0 re
+	$(MAKE) debug=0 sanitize=0 clean
 
 # ***** RECIPE MACROS *********
 
