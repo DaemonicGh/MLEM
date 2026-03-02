@@ -21,10 +21,17 @@ typedef enum {
 	ERR_EXPECTED_ASSIGN,
 	ERR_EXPECTED_VALUE,
 
+	ERR_INVALID_NUMBER,
+	ERR_NUMBER_OUT_OF_RANGE,
+	ERR_INVALID_BASE_PREFIX,
+	ERR_EMPTY_EXPONENT,
+	ERR_INVALID_EXPONENT
+
 }	mlem_error;
 
 typedef enum {
-	MLEM_TYPE_NULL = 0,
+	MLEM_TYPE_ERROR,
+	MLEM_TYPE_NULL,
     MLEM_TYPE_INT,
     MLEM_TYPE_FLOAT,
     MLEM_TYPE_STRING,
@@ -57,8 +64,7 @@ typedef struct {
 	bool			nothing;
 }	mlem_settings;
 
-#define MLEM_VALUE(t)	(mlem_value){.type = (t)}
-#define MLEM_NULL_VALUE	(mlem_value){0}
+#define MLEM_VALUE(t)		(mlem_value){.type = (t)}
 
 // Functions
 

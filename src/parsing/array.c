@@ -1,6 +1,5 @@
 
 #include <stdlib.h>
-#include <string.h>
 
 #include "mlem.h"
 #include "parser.h"
@@ -15,14 +14,14 @@ append_value(mlem_context *mlem, mlem_array *array, mlem_token *token)
 
 	if (token->type & TKG_WORD)
 	{
-		val = (mlem_value){
-			.type = MLEM_TYPE_STRING,
-			.val_string = strndup(token->val, token->len)
-		};
-		if (val.val_string && DA_append(array, val))
-			return (true);
-		free(val.val_string);
-		mlem->error = set_error(ERR_MEMORY);
+		val = get_value(mlem, token);
+		if (val.type)
+		{
+			if (DA_append(array, val))
+				return (true);
+			free(val.val_string);
+			mlem->error = set_error(ERR_MEMORY);
+		}
 	}
 	else if (token->type & TKG_OPEN)
 	{

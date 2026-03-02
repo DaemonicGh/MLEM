@@ -5,6 +5,9 @@
 #include "tokens.h"
 
 mlem_value
+get_value(mlem_context *mlem, mlem_token *token);
+
+mlem_value
 parse_array(mlem_context *mlem, mlem_token *trigger_token);
 
 mlem_value

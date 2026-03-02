@@ -34,7 +34,7 @@ static get_structure_type(mlem_context *mlem)
 mlem_value
 parse_structure(mlem_context *mlem, mlem_token *trigger_token)
 {
-	mlem_value		structure = MLEM_NULL_VALUE;
+	mlem_value		structure = (mlem_value){0};
 
 	mlem->depth++;
 	if (trigger_token->type & TK_OPEN_UNKNOWN)
@@ -49,7 +49,7 @@ parse_structure(mlem_context *mlem, mlem_token *trigger_token)
 	else if (structure.type == MLEM_TYPE_OBJECT ||
 		trigger_token->type & TK_OPEN_OBJECT)
 		structure = parse_object(mlem, trigger_token);
-	else
+	else if (mlem->error)
 		structure = MLEM_ERROR_VALUE(mlem->error);
 
 	mlem->depth--;

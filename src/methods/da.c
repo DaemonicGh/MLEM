@@ -19,7 +19,7 @@ DA_append(mlem_array *array, mlem_value ele)
 		return (false);
 
 	array->data[array->len++]	= ele;
-	array->data[array->len]		= MLEM_NULL_VALUE;
+	array->data[array->len]		= (mlem_value){0};
 	return (true);
 }
 

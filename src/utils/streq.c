@@ -17,6 +17,18 @@ streq(const char *s1, const char *s2)
 }
 
 size_t
+strneq(const char *s1, const char *s2, size_t n)
+{
+	size_t	i = 0;
+
+	while (s1[i] && s1[i] == s2[i] && n--)
+		i++;
+	if (s2[i])
+		return (0);
+	return (i);
+}
+
+size_t
 streq_list(const char *s, const char **sa)
 {
 	size_t	i;
@@ -24,6 +36,19 @@ streq_list(const char *s, const char **sa)
 	for (i = 0; sa[i]; i++)
 	{
 		if (streq(s, sa[i]))
+			return (i);
+	}
+	return (ST_N1);
+}
+
+size_t
+strneq_list(const char *s, const char **sa, size_t n)
+{
+	size_t	i;
+
+	for (i = 0; sa[i]; i++)
+	{
+		if (strneq(s, sa[i], n))
 			return (i);
 	}
 	return (ST_N1);

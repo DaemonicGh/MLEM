@@ -16,10 +16,15 @@ static const char	*error_messages[] = {
 	"Incorrect closing symbol",
 	"Object assignment in array",
 	"Expected assignment symbol",
-	"Expected value"
+	"Expected value",
+	"Invalid number",
+	"Numeric value out of 64-bit range",
+	"Invalid value base prefix",
+	"Empty value exponent",
+	"Invalid value exponent"
 };
 
-#define MLEM_ERROR_VALUE(err)	(mlem_value){.type = MLEM_TYPE_NULL, .val_int = (err)}
+#define MLEM_ERROR_VALUE(err)	(mlem_value){.type = MLEM_TYPE_ERROR, .val_int = (err)}
 
 mlem_error
 set_error(mlem_error type);

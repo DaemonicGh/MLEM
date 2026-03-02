@@ -19,9 +19,9 @@ get_key_value_tokens(mlem_context *mlem, mlem_token *key, mlem_token *value)
 	*value = MLEM_NULL_TOKEN;
 
 	*key = get_next_token(mlem);
-	if (!key->type && mlem->error)
+	if (!key->type)
 		return (false);
-	if (!key->type && key->type & ~TKG_OBJECT_KEY)
+	if (key->type & ~TKG_OBJECT_KEY)
 	{
 		set_error_t(mlem, key, ERR_UNEXPECTED_TOKEN);
 		return (false);
@@ -71,14 +71,15 @@ append_pair(mlem_context *mlem, mlem_object *object, mlem_token *key, mlem_token
 
 	if (value->type & TKG_WORD)
 	{
-		val.value = (mlem_value){
-			.type = MLEM_TYPE_STRING,
-			.val_string = strndup(value->val, value->len)
-		};
-		if (val.value.val_string && DO_append(object, val))
-			return (true);
-		free(val.value.val_string);
-		set_error_l(mlem, ERR_MEMORY);
+		val.value = get_value(mlem, value);
+		if (val.value.type)
+		{
+			mlem_print_value(&val.value);
+			if (DO_append(object, val))
+				return (true);
+			free(val.value.val_string);
+			set_error_l(mlem, ERR_MEMORY);
+		}
 	}
 	else if (value->type & TKG_OPEN)
 	{

@@ -1,8 +1,11 @@
 
 #pragma once
 
+#include <math.h>
 #include <stddef.h>
 #include <stdbool.h>
+
+#include "mlem.h"
 #include "context.h"
 
 typedef enum
@@ -91,14 +94,37 @@ static const mlem_token_trigger token_triggers[] =
 	{0}
 };
 
-static const char	*skip_triggers[] = {
+static const char				*skip_triggers[] = {
 	" ", "\t", "\n", ",", NULL
 };
 
-static const char	*token_repr[] = {
+static const char				*token_repr[] = {
 	"N", "W", "[", "]", "(", ")", "{", "}", "=",
 	"'", "\"", "//", "///", "/*", "*/", NULL
 };
+
+static const mlem_pair			value_constants[] =
+{
+	{.key	= "null",
+	 .value = {.type = MLEM_TYPE_NULL}},
+	{.key	= "false",
+	 .value = {.type = MLEM_TYPE_BOOL,	.val_bool	= false}},
+	{.key	= "true",
+	 .value = {.type = MLEM_TYPE_BOOL,	.val_bool	= true}},
+	{.key	= "inf",
+	 .value = {.type = MLEM_TYPE_FLOAT,	.val_float	= INFINITY}},
+	{.key	= "-inf",
+	 .value = {.type = MLEM_TYPE_FLOAT,	.val_float	= -INFINITY}},
+	{.key	= "nan",
+	 .value = {.type = MLEM_TYPE_FLOAT,	.val_float	= NAN}},
+	{0}
+};
+
+static const char				*pre_number_triggers[] = {
+	"-.", "+.", "-", ".", "+", NULL
+};
+static const char				*number_values			= "0123456789ABCDEF";
+static const char				*number_base_triggers	= "  BTQ   O   D   X";
 
 void
 print_token(mlem_token_type token);

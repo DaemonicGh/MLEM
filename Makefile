@@ -18,13 +18,13 @@ NAMES					:=	libmlem.a libmlem.so
 COMMON_FILES			:=	\
 	errors/error																\
 	parsing/array parsing/file parsing/object parsing/parse parsing/start 		\
-	parsing/structure															\
+	parsing/structure parsing/value												\
 	parsing/tokenizer/get_token parsing/tokenizer/move parsing/tokenizer/trigger\
 	methods/token methods/value methods/da methods/do methods/ds				\
-	utils/strchr_bs utils/streq
+	utils/strchr_bs utils/streq utils/strfind
 
 LOCAL_LIBRARIES			:=
-OTHER_LIBRARIES			:=
+OTHER_LIBRARIES			:= m
 
 INCLUDE_DIRECTORIES		:=	include src/_static
 

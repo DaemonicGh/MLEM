@@ -3,8 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "errors.h"
 #include "mlem.h"
+#include "errors.h"
 
 static void
 print_value_internal(mlem_value *val, size_t depth, bool preceded)
@@ -39,8 +39,27 @@ print_value_internal(mlem_value *val, size_t depth, bool preceded)
 			printf("\"%s\"\n", val->val_string);
 			break ;
 
+		case MLEM_TYPE_INT:
+			printf("%zi\n", val->val_int);
+			break ;
+
+		case MLEM_TYPE_FLOAT:
+			printf("%f\n", val->val_float);
+			break ;
+
+		case MLEM_TYPE_BOOL:
+			if (val->val_bool)
+				printf("true\n");
+			else
+				printf("false\n");
+			break ;
+
 		case MLEM_TYPE_NULL:
 			printf("Null\n");
+			break ;
+
+		case MLEM_TYPE_ERROR:
+			printf("Error: %s\n", error_messages[val->val_int]);
 			break ;
 
 		default:
@@ -82,5 +101,5 @@ mlem_destroy_value(mlem_value *val, bool free_strings)
 
 		default: break ;
 	}
-	*val = MLEM_NULL_VALUE;
+	*val = MLEM_ERROR_VALUE(ERR_NONE);
 }
