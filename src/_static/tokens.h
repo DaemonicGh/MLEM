@@ -98,6 +98,14 @@ static const char				*skip_triggers[] = {
 	" ", "\t", "\n", ",", NULL
 };
 
+static const char				*backslash_transforms[][2] = {
+	{"\n", ""  },
+	{"\\", "\\"},	{"\"", "\""},	{"'" , "'" },
+	{"n" , "\n"},	{"t" , "\t"},
+	{"r" , "\r"},	{"b" , "\b"},	{"f" , "\f"},
+	{0}
+};
+
 static const char				*token_repr[] = {
 	"N", "W", "[", "]", "(", ")", "{", "}", "=",
 	"'", "\"", "//", "///", "/*", "*/", NULL

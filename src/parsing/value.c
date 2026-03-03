@@ -216,8 +216,8 @@ get_value(mlem_context *mlem, mlem_token *token)
 		}
 	}
 	value.type = MLEM_TYPE_STRING;
-	value.val_string = strndup(token->val, token->len);
+	value.val_string = mlem_tkstrndup_bs(mlem, token);
 	if (!value.val_string)
-		return (MLEM_ERROR_VALUE(set_error(ERR_MEMORY)));
+		return (MLEM_ERROR_VALUE(mlem->error));
 	return (value);
 }

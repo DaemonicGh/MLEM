@@ -22,7 +22,7 @@ print_value_internal(mlem_value *val, size_t depth, bool preceded)
 			printf("[\n");
 			for (size_t i = 0; val->val_array[i].type; i++)
 				print_value_internal(&val->val_array[i], depth + 1, false);
-			printf("%s]\n", tab);
+			printf("%s]", tab);
 			break ;
 
 		case MLEM_TYPE_OBJECT:
@@ -32,39 +32,40 @@ print_value_internal(mlem_value *val, size_t depth, bool preceded)
 				printf("%s  \x1B[1m\"%s\"\x1B[0;2m = \x1B[0m", tab, val->val_object[i].key);
 				print_value_internal(&val->val_object[i].value, depth + 1, true);
 			}
-			printf("%s}\n", tab);
+			printf("%s}", tab);
 			break ;
 
 		case MLEM_TYPE_STRING:
-			printf("\"%s\"\n", val->val_string);
+			printf("\"%s\"", val->val_string);
 			break ;
 
 		case MLEM_TYPE_INT:
-			printf("%zi\n", val->val_int);
+			printf("%zi", val->val_int);
 			break ;
 
 		case MLEM_TYPE_FLOAT:
-			printf("%f\n", val->val_float);
+			printf("%f", val->val_float);
 			break ;
 
 		case MLEM_TYPE_BOOL:
 			if (val->val_bool)
-				printf("true\n");
+				printf("true");
 			else
-				printf("false\n");
+				printf("false");
 			break ;
 
 		case MLEM_TYPE_NULL:
-			printf("Null\n");
+			printf("Null");
 			break ;
 
 		case MLEM_TYPE_ERROR:
-			printf("Error: %s\n", error_messages[val->val_int]);
+			printf("Error: %s", error_messages[val->val_int]);
 			break ;
 
 		default:
-			printf("???\n");
+			printf("???");
 	}
+	printf("\n\x1B[0m");
 }
 
 void

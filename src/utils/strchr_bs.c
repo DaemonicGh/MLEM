@@ -1,14 +1,6 @@
 
 #include "utils.h"
 
-const char *
-skip_potential_backslash(const char *s)
-{
-	if (*s == '\\' && *(s + 1))
-		return (++s);
-	return (s);
-}
-
 const char*
 strchr_bs(const char *s, char c)
 {

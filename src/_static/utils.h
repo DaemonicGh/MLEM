@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "tokens.h"
+
 #define ST_N1			(size_t)-1
 
 size_t
@@ -18,6 +20,9 @@ streq_list(const char *s, const char* *sa);
 size_t
 strneq_list(const char *s, const char **sa, size_t n);
 
+size_t
+set_transformed_bs_sequence(const char *str, char *result);
+
 const char *
 skip_potential_backslash(const char *s);
 
@@ -26,6 +31,9 @@ strchr_bs(const char *s, char c);
 
 const char*
 strstr_bs(const char *s1, const char *s2);
+
+char
+*mlem_tkstrndup_bs(mlem_context *mlem, mlem_token *token);
 
 size_t
 strfind(const char *s, char c);

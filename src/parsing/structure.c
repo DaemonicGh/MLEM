@@ -39,9 +39,9 @@ parse_structure(mlem_context *mlem, mlem_token *trigger_token)
 	mlem->depth++;
 	if (trigger_token->type & TK_OPEN_UNKNOWN)
 	{
-		printf("(\n");
+		//printf("(\n");
 		structure.type = get_structure_type(mlem);
-		printf(")\n");
+		//printf(")\n");
 	}
 	if (structure.type == MLEM_TYPE_ARRAY ||
 		trigger_token->type & TK_OPEN_ARRAY)

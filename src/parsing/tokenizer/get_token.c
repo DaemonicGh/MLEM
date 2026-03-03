@@ -53,9 +53,10 @@ get_next_token(mlem_context *mlem)
 
 		token = get_token(mlem);
 
-		printf("\x1B[1mToken = \x1B[0m");
+		/*printf("\x1B[1mToken = \x1B[0m");
 		print_token(token.type);
 		printf("\x1B[2m %.*s\x1B[0m\n", (int)token.len, token.val);
+		*/
 
 		if (!token.type || token.type & TKG_SIGNIFICANT)
 			return (token);

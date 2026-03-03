@@ -3,12 +3,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "context.h"
 #include "mlem.h"
 #include "parser.h"
 #include "structures.h"
 #include "errors.h"
-#include "tokens.h"
+#include "utils.h"
+
+static bool
+is_dup_key(mlem_token *key, mlem_object *object)
+{
+	for (size_t i = 0; i < object->len; i++)
+	{
+		if (strncmp(object->data[i].key, key->val, key->len) == 0
+			&& !object->data[i].key[key->len])
+			return (true);
+	}
+	return (false);
+}
 
 static bool
 get_key_value_tokens(mlem_context *mlem, mlem_token *key, mlem_token *value)
@@ -62,19 +73,20 @@ append_pair(mlem_context *mlem, mlem_object *object, mlem_token *key, mlem_token
 		set_error_t(mlem, key, ERR_UNEXPECTED_TOKEN);
 		return (false);
 	}
-	val.key = strndup(key->val, key->len);
-	if (!val.key)
+	if (is_dup_key(key, object))
 	{
-		set_error(ERR_MEMORY);
+		set_error_t(mlem, key, ERR_DUPLICATED_KEY);
 		return (false);
 	}
+	val.key = mlem_tkstrndup_bs(mlem, key);
+	if (!val.key)
+		return (false);
 
 	if (value->type & TKG_WORD)
 	{
 		val.value = get_value(mlem, value);
 		if (val.value.type)
 		{
-			mlem_print_value(&val.value);
 			if (DO_append(object, val))
 				return (true);
 			free(val.value.val_string);

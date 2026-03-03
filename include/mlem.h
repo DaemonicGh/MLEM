@@ -4,7 +4,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-typedef enum {
+typedef enum
+{
 	ERR_NONE,
 
 	ERR_UNEXPECTED_ERROR,
@@ -14,12 +15,16 @@ typedef enum {
 
 	ERR_NULL_INPUT,
 	ERR_UNEXPECTED_TOKEN,
+
+	ERR_INVALID_BACKSLASH,
 	ERR_UNCLOSED_SYMBOL,
 	ERR_UNCLOSED_STRUCTURE,
 	ERR_WRONG_STRUCTURE_CLOSE,
+
 	ERR_ASSIGN_IN_ARRAY,
 	ERR_EXPECTED_ASSIGN,
 	ERR_EXPECTED_VALUE,
+	ERR_DUPLICATED_KEY,
 
 	ERR_INVALID_NUMBER,
 	ERR_NUMBER_OUT_OF_RANGE,
@@ -27,9 +32,11 @@ typedef enum {
 	ERR_EMPTY_EXPONENT,
 	ERR_INVALID_EXPONENT
 
-}	mlem_error;
+}
+mlem_error;
 
-typedef enum {
+typedef enum
+{
 	MLEM_TYPE_ERROR,
 	MLEM_TYPE_NULL,
     MLEM_TYPE_INT,
@@ -38,12 +45,15 @@ typedef enum {
     MLEM_TYPE_BOOL,
     MLEM_TYPE_ARRAY,
     MLEM_TYPE_OBJECT
-}	mlem_value_type;
+
+}
+mlem_value_type;
 
 typedef struct mlem_value_s	mlem_value;
 typedef struct mlem_pair_s	mlem_pair;
 
-typedef struct mlem_value_s {
+typedef struct mlem_value_s
+{
 	mlem_value_type	type;
 	union {
 		long		val_int;
@@ -53,16 +63,21 @@ typedef struct mlem_value_s {
 		mlem_value	*val_array;
 		mlem_pair	*val_object;
 	};
-}	mlem_value;
+}
+mlem_value;
 
-typedef struct mlem_pair_s {
+typedef struct mlem_pair_s
+{
 	char			*key;
 	mlem_value		value;
-}	mlem_pair;
+}
+mlem_pair;
 
-typedef struct {
+typedef struct
+{
 	bool			nothing;
-}	mlem_settings;
+}
+mlem_settings;
 
 #define MLEM_VALUE(t)		(mlem_value){.type = (t)}
 

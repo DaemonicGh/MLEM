@@ -21,7 +21,7 @@ COMMON_FILES			:=	\
 	parsing/structure parsing/value												\
 	parsing/tokenizer/get_token parsing/tokenizer/move parsing/tokenizer/trigger\
 	methods/token methods/value methods/da methods/do methods/ds				\
-	utils/strchr_bs utils/streq utils/strfind
+	utils/bs_utils utils/strchr_bs utils/streq utils/strfind utils/tkstrdup_bs
 
 LOCAL_LIBRARIES			:=
 OTHER_LIBRARIES			:= m
