@@ -1,10 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   errors.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/02 13:59:06 by rprieur           #+#    #+#             */
+/*   Updated: 2026/04/02 14:00:37 by rprieur          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #pragma once
 
 #include "context.h"
 #include "tokens.h"
 
-static const char	*error_messages[] = {
+static const char	*g_error_messages[] = {
 	"",
 	"Unexpected error",
 	"Unable to open file",
@@ -26,13 +37,13 @@ static const char	*error_messages[] = {
 	"Invalid value exponent"
 };
 
-#define MLEM_ERROR_VALUE(err)	(mlem_value){.type = MLEM_TYPE_ERROR, .val_int = (err)}
+#define MLEM_ERROR_VALUE(err)	(t_mlem_value){.type = MLEM_TYPE_ERROR, .val_int = (err)}
 
-mlem_error
-set_error(mlem_error type);
+t_mlem_error
+set_error(t_mlem_error type);
 
-mlem_error
-set_error_l(mlem_context *mlem, mlem_error type);
+t_mlem_error
+set_error_l(t_mlem_context *mlem, t_mlem_error type);
 
-mlem_error
-set_error_t(mlem_context *mlem, mlem_token *token, mlem_error type);
+t_mlem_error
+set_error_t(t_mlem_context *mlem, t_mlem_token *token, t_mlem_error type);

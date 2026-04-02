@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_token.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/02 13:59:06 by rprieur           #+#    #+#             */
+/*   Updated: 2026/04/02 14:00:37 by rprieur          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -7,11 +18,11 @@
 #include "errors.h"
 #include "tokens.h"
 
-static mlem_token
-get_token(mlem_context *mlem)
+static t_mlem_token
+get_token(t_mlem_context *mlem)
 {
 	const char	*trigger_str = "";
-	mlem_token	token = {.type = TK_WORD};
+	t_mlem_token	token = {.type = TK_WORD};
 
 	token.trigger = get_start_trigger_p(mlem->content, &trigger_str);
 	if (token.trigger)
@@ -35,10 +46,10 @@ get_token(mlem_context *mlem)
 	return (token);
 }
 
-mlem_token
-get_next_token(mlem_context *mlem)
+t_mlem_token
+get_next_token(t_mlem_context *mlem)
 {
-	mlem_token					token;
+	t_mlem_token					token;
 
 	while (true)
 	{

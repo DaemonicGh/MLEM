@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   move.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/02 13:59:06 by rprieur           #+#    #+#             */
+/*   Updated: 2026/04/02 14:00:37 by rprieur          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <string.h>
 #include <stdio.h>
@@ -9,7 +20,7 @@
 #include "utils.h"
 
 bool
-move_forward(mlem_context *mlem, size_t amount)
+move_forward(t_mlem_context *mlem, size_t amount)
 {
 	while (amount-- && *mlem->content)
 	{
@@ -25,35 +36,35 @@ move_forward(mlem_context *mlem, size_t amount)
 }
 
 bool
-move_past_blank(mlem_context *mlem)
+move_past_blank(t_mlem_context *mlem)
 {
 	size_t		match_i;
 
 	while (*mlem->content)
 	{
-		match_i = streq_list(mlem->content, skip_triggers);
+		match_i = streq_list(mlem->content, g_skip_triggers);
 		if (match_i == ST_N1)
 			break ;
-		move_forward(mlem, strlen(skip_triggers[match_i]));
+		move_forward(mlem, strlen(g_skip_triggers[match_i]));
 	}
 	return (*mlem->content);
 }
 
 bool
-move_past_word(mlem_context *mlem)
+move_past_word(t_mlem_context *mlem)
 {
 	size_t 			i = 1;
 
 	while (*(mlem->content + i) &&
 		!get_start_trigger(mlem->content + i) &&
-		streq_list(mlem->content + i, skip_triggers) == ST_N1)
+		streq_list(mlem->content + i, g_skip_triggers) == ST_N1)
 		i++;
 	move_forward(mlem, i);
 	return (*mlem->content);
 }
 
 bool
-move_past_extend(mlem_context *mlem, mlem_token *token, const char **trigger_str)
+move_past_extend(t_mlem_context *mlem, t_mlem_token *token, const char **trigger_str)
 {
 	size_t	end = ST_N1;
 	size_t	i;

@@ -1,36 +1,51 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   do.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/02 13:59:06 by rprieur           #+#    #+#             */
+/*   Updated: 2026/04/02 14:00:37 by rprieur          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <stdlib.h>
 #include "mlem.h"
 #include "structures.h"
 
-mlem_object
-DO_new(void)
+t_mlem_object
+	do_new(void)
 {
-	return (DS_new(sizeof(mlem_pair)).object);
+	return (ds_new(sizeof(t_mlem_pair)).object);
 }
 
 bool
-DO_append(mlem_object *object, mlem_pair ele)
+	do_append(t_mlem_object *object, t_mlem_pair ele)
 {
-	mlem_structure	*structure = (mlem_structure *)object;
+	t_mlem_structure	*structure;
 
-	if (object->len == object->capacity &&
-		!DS_resize(structure, object->capacity * DS_GROW_RATIO))
+	structure = (t_mlem_structure *)object;
+	if (object->len == object->capacity
+		&& !ds_resize(structure, object->capacity * DS_GROW_RATIO))
 		return (false);
-
-	object->data[object->len++]				= ele;
-	object->data[object->len]				= (mlem_pair){0};
+	object->data[object->len++] = ele;
+	object->data[object->len] = (t_mlem_pair){0};
 	return (true);
 }
 
 void
-DO_destroy(mlem_object *object, bool free_strings)
+	do_destroy(t_mlem_object *object, bool free_strings)
 {
-	for (size_t i = 0; i < object->len; i++)
+	size_t	i;
+
+	i = 0;
+	while (i < object->len)
 	{
 		if (free_strings)
 			free(object->data[i].key);
 		mlem_destroy_value(&object->data[i].value, free_strings);
+		i++;
 	}
 	free(object->data);
 }

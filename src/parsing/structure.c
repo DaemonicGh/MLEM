@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   structure.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/02 13:59:06 by rprieur           #+#    #+#             */
+/*   Updated: 2026/04/02 14:00:37 by rprieur          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <stdio.h>
 
@@ -6,13 +17,13 @@
 #include "parser.h"
 #include "tokens.h"
 
-mlem_value_type
-static get_structure_type(mlem_context *mlem)
+t_mlem_value_type
+static get_structure_type(t_mlem_context *mlem)
 {
-	mlem_context	mlem_sp	= *mlem;
-	mlem_token		token;
+	t_mlem_context	t_mlem_sp	= *mlem;
+	t_mlem_token		token;
 
-	token = get_next_token(&mlem_sp);
+	token = get_next_token(&t_mlem_sp);
 	if (!token.type)
 		return (MLEM_TYPE_NULL);
 	if (token.type & (TKG_CLOSE | TKG_OPEN))
@@ -23,7 +34,7 @@ static get_structure_type(mlem_context *mlem)
 		return (MLEM_TYPE_NULL);
 	}
 
-	token = get_next_token(&mlem_sp);
+	token = get_next_token(&t_mlem_sp);
 	if (!token.type && mlem->error)
 		return (MLEM_TYPE_NULL);
 	if (token.type & TK_ASSIGN)
@@ -31,10 +42,10 @@ static get_structure_type(mlem_context *mlem)
 	return (MLEM_TYPE_ARRAY);
 }
 
-mlem_value
-parse_structure(mlem_context *mlem, mlem_token *trigger_token)
+t_mlem_value
+parse_structure(t_mlem_context *mlem, t_mlem_token *trigger_token)
 {
-	mlem_value		structure = (mlem_value){0};
+	t_mlem_value		structure = (t_mlem_value){0};
 
 	mlem->depth++;
 	if (trigger_token->type & TK_OPEN_UNKNOWN)

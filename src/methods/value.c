@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   value.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/02 13:59:06 by rprieur           #+#    #+#             */
+/*   Updated: 2026/04/02 14:00:37 by rprieur          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <stdio.h>
 #include <string.h>
@@ -7,12 +18,14 @@
 #include "errors.h"
 
 static void
-print_value_internal(mlem_value *val, size_t depth, bool preceded)
+	print_value_internal(t_mlem_value *val, size_t depth, bool preceded)
 {
-	char		tab[65] = {0};
+	char		tab[65];
 
-	if (depth > 32) depth = 32;
+	if (depth > 32)
+		depth = 32;
 	memset(tab, ' ', depth * 2);
+	tab[depth * 2] = '\0';
 	if (!preceded)
 		printf("%s", tab);
 
@@ -59,7 +72,7 @@ print_value_internal(mlem_value *val, size_t depth, bool preceded)
 			break ;
 
 		case MLEM_TYPE_ERROR:
-			printf("Error: %s", error_messages[val->val_int]);
+			printf("Error: %s", g_error_messages[val->val_int]);
 			break ;
 
 		default:
@@ -69,13 +82,13 @@ print_value_internal(mlem_value *val, size_t depth, bool preceded)
 }
 
 void
-mlem_print_value(mlem_value *val)
+	mlem_print_value(t_mlem_value *val)
 {
 	print_value_internal(val, 0, false);
 }
 
 void
-mlem_destroy_value(mlem_value *val, bool free_strings)
+	mlem_destroy_value(t_mlem_value *val, bool free_strings)
 {
 	switch (val->type) {
 

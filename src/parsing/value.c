@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   value.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/02 13:59:06 by rprieur           #+#    #+#             */
+/*   Updated: 2026/04/02 14:00:37 by rprieur          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <ctype.h>
 #include <string.h>
@@ -11,7 +22,7 @@
 #include "utils.h"
 
 static bool
-mlem_tktol_base(mlem_context *mlem, mlem_token *token, long *val)
+t_mlem_tktol_base(t_mlem_context *mlem, t_mlem_token *token, long *val)
 {
 	long		nval = 0;
 	int			sign = 1;
@@ -29,7 +40,7 @@ mlem_tktol_base(mlem_context *mlem, mlem_token *token, long *val)
 	if (token->val[i] == '0' && isalpha(token->val[i + 1]))
 	{
 		i++;
-		if ((base = strfind(number_base_triggers, toupper(token->val[i]))) == -1)
+		if ((base = strfind(g_number_base_triggers, toupper(token->val[i]))) == -1)
 		{
 			set_error_t(mlem, token, ERR_INVALID_BASE_PREFIX);
 			return (false);
@@ -38,7 +49,7 @@ mlem_tktol_base(mlem_context *mlem, mlem_token *token, long *val)
 	}
 
 	while ((nval = strnfind(
-		number_values, toupper(token->val[i]), base - 1)
+		g_number_values, toupper(token->val[i]), base - 1)
 	) != -1 && i < token->len)
 	{
 		nval = *val * base + nval * sign;
@@ -60,7 +71,7 @@ mlem_tktol_base(mlem_context *mlem, mlem_token *token, long *val)
 }
 
 static bool
-mlem_tktod(mlem_context *mlem, mlem_token *token, double *val)
+t_mlem_tktod(t_mlem_context *mlem, t_mlem_token *token, double *val)
 {
 	double	nval	= 0;
 	int		sign	= 1;
@@ -158,28 +169,28 @@ mlem_tktod(mlem_context *mlem, mlem_token *token, double *val)
 }
 
 static bool
-mlem_tktonbr(mlem_context *mlem, mlem_token *token, mlem_value *value)
+t_mlem_tktonbr(t_mlem_context *mlem, t_mlem_token *token, t_mlem_value *value)
 {
 	if (strnfindset(token->val, ".eE", token->len) == ST_N1)
 	{
 		value->type = MLEM_TYPE_INT;
-		return (mlem_tktol_base(mlem, token, &value->val_int));
+		return (t_mlem_tktol_base(mlem, token, &value->val_int));
 	}
 	else
 	{
 		value->type = MLEM_TYPE_FLOAT;
-		return (mlem_tktod(mlem, token, &value->val_float));
+		return (t_mlem_tktod(mlem, token, &value->val_float));
 	}
 }
 
 static bool
-as_constant(mlem_token *token, mlem_value *value)
+as_constant(t_mlem_token *token, t_mlem_value *value)
 {
-	for (size_t	i = 0; value_constants[i].key; i++)
+	for (size_t	i = 0; g_value_constants[i].key; i++)
 	{
-		if (strncasecmp(token->val, value_constants[i].key, token->len) == 0)
+		if (strncasecmp(token->val, g_value_constants[i].key, token->len) == 0)
 		{
-			*value = value_constants[i].value;
+			*value = g_value_constants[i].value;
 			return (true);
 		}
 	}
@@ -187,22 +198,22 @@ as_constant(mlem_token *token, mlem_value *value)
 }
 
 static bool
-is_number(mlem_token *token)
+is_number(t_mlem_token *token)
 {
 	size_t	i;
 
-	i = streq_list(token->val, pre_number_triggers);
+	i = streq_list(token->val, g_pre_number_triggers);
 	if (i != ST_N1)
-		i = strlen(pre_number_triggers[i]);
+		i = strlen(g_pre_number_triggers[i]);
 	else
 		i = 0;
 	return (isdigit(token->val[i]));
 }
 
-mlem_value
-get_value(mlem_context *mlem, mlem_token *token)
+t_mlem_value
+get_value(t_mlem_context *mlem, t_mlem_token *token)
 {
-	mlem_value	value = (mlem_value){0};
+	t_mlem_value	value = (t_mlem_value){0};
 
 	if (token->type & TK_WORD)
 	{
@@ -210,13 +221,13 @@ get_value(mlem_context *mlem, mlem_token *token)
 			return (value);
 		if (is_number(token))
 		{
-			if (mlem_tktonbr(mlem, token, &value))
+			if (t_mlem_tktonbr(mlem, token, &value))
 				return (value);
 			return (MLEM_ERROR_VALUE(mlem->error));
 		}
 	}
 	value.type = MLEM_TYPE_STRING;
-	value.val_string = mlem_tkstrndup_bs(mlem, token);
+	value.val_string = t_mlem_tkstrndup_bs(mlem, token);
 	if (!value.val_string)
 		return (MLEM_ERROR_VALUE(mlem->error));
 	return (value);

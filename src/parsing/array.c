@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   array.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/02 13:59:06 by rprieur           #+#    #+#             */
+/*   Updated: 2026/04/02 14:00:37 by rprieur          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <stdlib.h>
 
@@ -8,9 +19,9 @@
 #include "tokens.h"
 
 static bool
-append_value(mlem_context *mlem, mlem_array *array, mlem_token *token)
+append_value(t_mlem_context *mlem, t_mlem_array *array, t_mlem_token *token)
 {
-	mlem_value	val;
+	t_mlem_value	val;
 
 	if (token->type & TKG_WORD)
 	{
@@ -37,19 +48,19 @@ append_value(mlem_context *mlem, mlem_array *array, mlem_token *token)
 	return (false);
 }
 
-static mlem_value
-send_array(mlem_array *array)
+static t_mlem_value
+send_array(t_mlem_array *array)
 {
 	if (array->len + DS_CROP_THRESHOLD < array->capacity)
-		DS_resize((mlem_structure *)array, array->len);
-	return ((mlem_value){.type = MLEM_TYPE_ARRAY, .val_array = array->data});
+		DS_resize((t_mlem_structure *)array, array->len);
+	return ((t_mlem_value){.type = MLEM_TYPE_ARRAY, .val_array = array->data});
 }
 
-mlem_value
-parse_array(mlem_context *mlem, mlem_token *trigger_token)
+t_mlem_value
+parse_array(t_mlem_context *mlem, t_mlem_token *trigger_token)
 {
-	mlem_array	array = DA_new();
-	mlem_token	token = MLEM_NULL_TOKEN;
+	t_mlem_array	array = DA_new();
+	t_mlem_token	token = MLEM_NULL_TOKEN;
 
 	if (!array.data)
 	{

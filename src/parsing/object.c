@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   object.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/02 13:59:06 by rprieur           #+#    #+#             */
+/*   Updated: 2026/04/02 14:00:37 by rprieur          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -10,7 +21,7 @@
 #include "utils.h"
 
 static bool
-is_dup_key(mlem_token *key, mlem_object *object)
+is_dup_key(t_mlem_token *key, t_mlem_object *object)
 {
 	for (size_t i = 0; i < object->len; i++)
 	{
@@ -22,9 +33,9 @@ is_dup_key(mlem_token *key, mlem_object *object)
 }
 
 static bool
-get_key_value_tokens(mlem_context *mlem, mlem_token *key, mlem_token *value)
+get_key_value_tokens(t_mlem_context *mlem, t_mlem_token *key, t_mlem_token *value)
 {
-	mlem_token	assign;
+	t_mlem_token	assign;
 
 	*key = MLEM_NULL_TOKEN;
 	*value = MLEM_NULL_TOKEN;
@@ -64,9 +75,9 @@ get_key_value_tokens(mlem_context *mlem, mlem_token *key, mlem_token *value)
 }
 
 static bool
-append_pair(mlem_context *mlem, mlem_object *object, mlem_token *key, mlem_token *value)
+append_pair(t_mlem_context *mlem, t_mlem_object *object, t_mlem_token *key, t_mlem_token *value)
 {
-	mlem_pair	val;
+	t_mlem_pair	val;
 
 	if (key->type & ~TKG_WORD)
 	{
@@ -78,7 +89,7 @@ append_pair(mlem_context *mlem, mlem_object *object, mlem_token *key, mlem_token
 		set_error_t(mlem, key, ERR_DUPLICATED_KEY);
 		return (false);
 	}
-	val.key = mlem_tkstrndup_bs(mlem, key);
+	val.key = t_mlem_tkstrndup_bs(mlem, key);
 	if (!val.key)
 		return (false);
 
@@ -109,20 +120,20 @@ append_pair(mlem_context *mlem, mlem_object *object, mlem_token *key, mlem_token
 	return (false);
 }
 
-static mlem_value
-send_object(mlem_object *object)
+static t_mlem_value
+send_object(t_mlem_object *object)
 {
 	if (object->len + DS_CROP_THRESHOLD < object->capacity)
-		DS_resize((mlem_structure *)object, object->len);
-	return ((mlem_value){.type = MLEM_TYPE_OBJECT, .val_object = object->data});
+		DS_resize((t_mlem_structure *)object, object->len);
+	return ((t_mlem_value){.type = MLEM_TYPE_OBJECT, .val_object = object->data});
 }
 
-mlem_value
-parse_object(mlem_context *mlem, mlem_token *trigger_token)
+t_mlem_value
+parse_object(t_mlem_context *mlem, t_mlem_token *trigger_token)
 {
-	mlem_object	object	= DO_new();
-	mlem_token	key;
-	mlem_token	value;
+	t_mlem_object	object	= DO_new();
+	t_mlem_token	key;
+	t_mlem_token	value;
 
 	if (!object.data)
 	{
