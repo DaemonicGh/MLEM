@@ -19,7 +19,7 @@
 #include "tokens.h"
 
 static bool
-append_value(t_mlem_context *mlem, t_mlem_array *array, t_mlem_token *token)
+	append_value(t_mlem_context *mlem, t_mlem_array *array, t_mlem_token *token)
 {
 	t_mlem_value	val;
 
@@ -28,7 +28,7 @@ append_value(t_mlem_context *mlem, t_mlem_array *array, t_mlem_token *token)
 		val = get_value(mlem, token);
 		if (val.type)
 		{
-			if (DA_append(array, val))
+			if (da_append(array, val))
 				return (true);
 			free(val.val_string);
 			mlem->error = set_error(ERR_MEMORY);
@@ -39,7 +39,7 @@ append_value(t_mlem_context *mlem, t_mlem_array *array, t_mlem_token *token)
 		val = parse_structure(mlem, token);
 		if (!val.type)
 			return (false);
-		if (DA_append(array, val))
+		if (da_append(array, val))
 			return (true);
 		mlem->error = set_error(ERR_MEMORY);
 	}
@@ -49,34 +49,24 @@ append_value(t_mlem_context *mlem, t_mlem_array *array, t_mlem_token *token)
 }
 
 static t_mlem_value
-send_array(t_mlem_array *array)
+	send_array(t_mlem_array *array)
 {
 	if (array->len + DS_CROP_THRESHOLD < array->capacity)
-		DS_resize((t_mlem_structure *)array, array->len);
+		ds_resize((t_mlem_structure *)array, array->len);
 	return ((t_mlem_value){.type = MLEM_TYPE_ARRAY, .val_array = array->data});
 }
 
-t_mlem_value
-parse_array(t_mlem_context *mlem, t_mlem_token *trigger_token)
+static bool
+	parse_array_loop(
+		t_mlem_context *mlem, t_mlem_token *trigger_token, t_mlem_array *array)
 {
-	t_mlem_array	array = DA_new();
-	t_mlem_token	token = MLEM_NULL_TOKEN;
-
-	if (!array.data)
-	{
-		mlem->error = set_error(ERR_MEMORY);
-		return (MLEM_ERROR_VALUE(ERR_MEMORY));
-	}
+	t_mlem_token	token;
 
 	while (true)
 	{
 		token = get_next_token(mlem);
 		if (!token.type)
-		{
-			if (!mlem->error)
-				return (send_array(&array));
-			break ;
-		}
+			return (!mlem->error);
 		if (token.type & TKG_CLOSE)
 		{
 			if (mlem->depth == 0)
@@ -84,12 +74,27 @@ parse_array(t_mlem_context *mlem, t_mlem_token *trigger_token)
 			else if (trigger_token->type & ~(token.type >> 1))
 				set_error_t(mlem, &token, ERR_WRONG_STRUCTURE_CLOSE);
 			else
-				return (send_array(&array));
-			break ;
+				return (true);
+			return (false);
 		}
-		if (!append_value(mlem, &array, &token))
-			break ;
+		if (!append_value(mlem, array, &token))
+			return (false);
 	}
-	DA_destroy(&array, true);
-	return (MLEM_ERROR_VALUE(mlem->error));
+}
+
+t_mlem_value
+	parse_array(t_mlem_context *mlem, t_mlem_token *trigger_token)
+{
+	t_mlem_array	array;
+
+	array = da_new();
+	if (!array.data)
+	{
+		mlem->error = set_error(ERR_MEMORY);
+		return ((t_mlem_value){.val_int = ERR_MEMORY});
+	}
+	if (parse_array_loop(mlem, trigger_token, &array))
+		return (send_array(&array));
+	da_destroy(&array, true);
+	return ((t_mlem_value){.val_int = mlem->error});
 }

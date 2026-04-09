@@ -62,8 +62,6 @@ typedef struct s_mlem_token
 	size_t					len;
 }	t_mlem_token;
 
-#define MLEM_NULL_TOKEN	(t_mlem_token){0}
-
 // Triggers
 
 #define MAX_TRIGGER_AMT	3

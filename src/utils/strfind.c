@@ -24,7 +24,7 @@ size_t
 		i++;
 	if (s[i] == c)
 		return (i);
-	return (ST_N1);
+	return (-1);
 }
 
 size_t
@@ -37,7 +37,7 @@ size_t
 		i++;
 	if (s[i] == c)
 		return (i);
-	return (ST_N1);
+	return (-1);
 }
 
 size_t
@@ -50,5 +50,5 @@ size_t
 		i++;
 	if (strchr(set, s[i]))
 		return (i);
-	return (ST_N1);
+	return (-1);
 }

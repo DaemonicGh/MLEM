@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   errors.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,26 +12,36 @@
 
 #pragma once
 
-#include "mlem.h"
+#include "context.h"
 #include "tokens.h"
 
-t_mlem_value
-get_value(t_mlem_context *mlem, t_mlem_token *token);
+static const char	*g_error_messages[] = {
+	"",
+	"Unexpected error",
+	"Unable to open file",
+	"Memory error",
+	"Given string is null",
+	"Unexpected token",
+	"Invalid backslash symbol",
+	"Unclosed symbol",
+	"Unclosed structure",
+	"Incorrect closing symbol",
+	"Object assignment in array",
+	"Expected assignment symbol",
+	"Expected value",
+	"Key already in object",
+	"Invalid number",
+	"Numeric value out of 64-bit range",
+	"Invalid value base prefix",
+	"Empty value exponent",
+	"Invalid value exponent"
+};
 
-t_mlem_value
-parse_array(t_mlem_context *mlem, t_mlem_token *trigger_token);
+t_mlem_error
+set_error(t_mlem_error type);
 
-t_mlem_value
-parse_object(t_mlem_context *mlem, t_mlem_token *trigger_token);
+t_mlem_error
+set_error_l(t_mlem_context *mlem, t_mlem_error type);
 
-t_mlem_value
-parse_structure(t_mlem_context *mlem, t_mlem_token *trigger_token);
-
-void
-parse_start(t_mlem_context *mlem);
-
-t_mlem_context
-init_context(char *content, t_mlem_settings settings);
-
-char
-*open_and_read_file(const char *filename, t_mlem_error *error);
+t_mlem_error
+set_error_t(t_mlem_context *mlem, t_mlem_token *token, t_mlem_error type);

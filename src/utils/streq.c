@@ -53,7 +53,7 @@ size_t
 			return (i);
 		i++;
 	}
-	return (ST_N1);
+	return (-1);
 }
 
 size_t
@@ -68,5 +68,5 @@ size_t
 			return (i);
 		i++;
 	}
-	return (ST_N1);
+	return (-1);
 }

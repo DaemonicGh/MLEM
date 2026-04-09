@@ -16,7 +16,7 @@
 #include "errors.h"
 
 char*
-open_and_read_file(const char *filename, t_mlem_error *error)
+	open_and_read_file(const char *filename, t_mlem_error *error)
 {
 	FILE	*file;
 	char	*content;
@@ -28,11 +28,9 @@ open_and_read_file(const char *filename, t_mlem_error *error)
 		*error = set_error(ERR_FILE);
 		return (NULL);
 	}
-
 	fseek(file, 0, SEEK_END);
 	content_size = ftell(file);
 	fseek(file, 0, SEEK_SET);
-
 	content = malloc(content_size + 1);
 	if (!content)
 	{
@@ -40,10 +38,8 @@ open_and_read_file(const char *filename, t_mlem_error *error)
 		fclose(file);
 		return (NULL);
 	}
-
 	fread(content, 1, content_size, file);
 	content[content_size] = '\0';
-
 	*error = ERR_NONE;
 	fclose(file);
 	return (content);

@@ -17,8 +17,6 @@
 
 #include "tokens.h"
 
-#define ST_N1			(size_t)-1
-
 size_t
 streq(const char *s1, const char *s2);
 
@@ -54,3 +52,41 @@ strnfind(const char *s, char c, size_t n);
 
 size_t
 strnfindset(const char *s, char *set, size_t n);
+
+size_t
+mlem_strlen(const char *str);
+
+char
+*mlem_strchr(const char *str, int c);
+
+int
+mlem_strncmp(const char *str1, const char *str2, size_t size);
+
+int
+mlem_strncasecmp(const char *str1, const char *str2, size_t size);
+
+int
+mlem_isdigit(int c);
+
+int
+mlem_toupper(int c);
+
+void
+mlem_bzero(void *addr, size_t size);
+
+int
+get_sign(t_mlem_token *token, size_t *i);
+
+int
+get_base(t_mlem_context *mlem, t_mlem_token *token, size_t *i);
+
+bool
+check_number_overflow(
+	t_mlem_context *mlem, t_mlem_token *token, long val, long nval);
+
+bool
+	check_number_overflowf(
+		t_mlem_context *mlem, t_mlem_token *token, double val, double nval);
+
+bool
+	is_end_valid(t_mlem_context *mlem, t_mlem_token *token, size_t i);

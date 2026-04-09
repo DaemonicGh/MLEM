@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mlem.h                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/19 15:29:30 by rprieur           #+#    #+#             */
+/*   Updated: 2026/04/02 15:09:58 by rprieur          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #pragma once
 
@@ -31,12 +42,12 @@ typedef enum e_mlem_value_type
 {
 	MLEM_TYPE_ERROR,
 	MLEM_TYPE_NULL,
-    MLEM_TYPE_INT,
-    MLEM_TYPE_FLOAT,
-    MLEM_TYPE_STRING,
-    MLEM_TYPE_BOOL,
-    MLEM_TYPE_ARRAY,
-    MLEM_TYPE_OBJECT
+	MLEM_TYPE_INT,
+	MLEM_TYPE_FLOAT,
+	MLEM_TYPE_STRING,
+	MLEM_TYPE_BOOL,
+	MLEM_TYPE_ARRAY,
+	MLEM_TYPE_OBJECT
 }	t_mlem_value_type;
 
 typedef struct s_mlem_value_s	t_mlem_value;
@@ -45,20 +56,21 @@ typedef struct s_mlem_pair_s	t_mlem_pair;
 typedef struct s_mlem_value_s
 {
 	t_mlem_value_type	type;
-	union {
-		long		val_int;
-		double		val_float;
-		char		*val_string;
-		bool		val_bool;
+	union
+	{
+		long			val_int;
+		double			val_float;
+		char			*val_string;
+		bool			val_bool;
 		t_mlem_value	*val_array;
-		t_mlem_pair	*val_object;
+		t_mlem_pair		*val_object;
 	};
 }	t_mlem_value;
 
 typedef struct s_mlem_pair_s
 {
 	char			*key;
-	t_mlem_value		value;
+	t_mlem_value	value;
 }	t_mlem_pair;
 
 typedef struct s_mlem_settings
@@ -66,30 +78,28 @@ typedef struct s_mlem_settings
 	bool			nothing;
 }	t_mlem_settings;
 
-#define MLEM_VALUE(t)		(t_mlem_value){.type = (t)}
-
 // Functions
 
 t_mlem_value
 mlem_parse(
-	char 			*content,
-	t_mlem_settings	settings
-);
+	char *content,
+	t_mlem_settings settings
+	);
 
 t_mlem_value
 mlem_parse_file(
-	const char		*filename,
-	char			**content,
-	t_mlem_settings	settings
-);
+	const char *filename,
+	char **content,
+	t_mlem_settings settings
+	);
 
 void
 mlem_print_value(
-	t_mlem_value		*val
-);
+	t_mlem_value *val
+	);
 
 void
 mlem_destroy_value(
-	t_mlem_value		*val,
-	bool			free_strings
-);
+	t_mlem_value *val,
+	bool free_strings
+	);

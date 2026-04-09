@@ -18,9 +18,6 @@
 #define DS_GROW_RATIO		2.0
 #define DS_CROP_THRESHOLD	16
 
-#define DA_VALUE_SIZE		sizeof(t_mlem_value)
-#define DO_VALUE_SIZE		sizeof(t_mlem_pair)
-
 typedef struct s_mlem_array
 {
 	t_mlem_value	*data;
@@ -47,7 +44,7 @@ typedef union s_mlem_structure
 		size_t		len;
 		size_t		capacity;
 		size_t		span;
-	};
+	}	raw;
 }	t_mlem_structure;
 
 t_mlem_structure

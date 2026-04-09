@@ -10,19 +10,18 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-
 #include "errors.h"
 #include "mlem.h"
 #include "parser.h"
 #include "tokens.h"
 
-t_mlem_value_type
-static get_structure_type(t_mlem_context *mlem)
+static t_mlem_value_type
+	get_structure_type(t_mlem_context *mlem)
 {
-	t_mlem_context	t_mlem_sp	= *mlem;
-	t_mlem_token		token;
+	t_mlem_context	t_mlem_sp;
+	t_mlem_token	token;
 
+	t_mlem_sp = *mlem;
 	token = get_next_token(&t_mlem_sp);
 	if (!token.type)
 		return (MLEM_TYPE_NULL);
@@ -33,7 +32,6 @@ static get_structure_type(t_mlem_context *mlem)
 		set_error_l(mlem, ERR_UNEXPECTED_TOKEN);
 		return (MLEM_TYPE_NULL);
 	}
-
 	token = get_next_token(&t_mlem_sp);
 	if (!token.type && mlem->error)
 		return (MLEM_TYPE_NULL);
@@ -43,26 +41,23 @@ static get_structure_type(t_mlem_context *mlem)
 }
 
 t_mlem_value
-parse_structure(t_mlem_context *mlem, t_mlem_token *trigger_token)
+	parse_structure(t_mlem_context *mlem, t_mlem_token *trigger_token)
 {
-	t_mlem_value		structure = (t_mlem_value){0};
+	t_mlem_value		structure;
 
 	mlem->depth++;
 	if (trigger_token->type & TK_OPEN_UNKNOWN)
-	{
-		//printf("(\n");
 		structure.type = get_structure_type(mlem);
-		//printf(")\n");
-	}
-	if (structure.type == MLEM_TYPE_ARRAY ||
-		trigger_token->type & TK_OPEN_ARRAY)
+	if (structure.type == MLEM_TYPE_ARRAY
+		|| trigger_token->type & TK_OPEN_ARRAY)
 		structure = parse_array(mlem, trigger_token);
-	else if (structure.type == MLEM_TYPE_OBJECT ||
-		trigger_token->type & TK_OPEN_OBJECT)
+	else if (structure.type == MLEM_TYPE_OBJECT
+		|| trigger_token->type & TK_OPEN_OBJECT)
 		structure = parse_object(mlem, trigger_token);
 	else if (mlem->error)
-		structure = MLEM_ERROR_VALUE(mlem->error);
-
+		structure = (t_mlem_value){.val_int = mlem->error};
+	else
+		structure = (t_mlem_value){0};
 	mlem->depth--;
 	return (structure);
 }

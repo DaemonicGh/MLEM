@@ -30,7 +30,7 @@ static char
 	return (str);
 }
 
-static bool	transform(t_mlem_context *mlem, t_mlem_token *token, char *str)
+static bool	transform(t_mlem_token *token, char *str)
 {
 	size_t	len;
 	size_t	i;
@@ -45,7 +45,7 @@ static bool	transform(t_mlem_context *mlem, t_mlem_token *token, char *str)
 			str[j] = 0;
 			i++;
 			len = set_transformed_bs_sequence(token->val + i, str + j);
-			if (len == ST_N1)
+			if (len == (size_t) - 1)
 				return (false);
 			i += len;
 			while (str[j])
@@ -54,6 +54,7 @@ static bool	transform(t_mlem_context *mlem, t_mlem_token *token, char *str)
 		else
 			str[j++] = token->val[i++];
 	}
+	str[j] = 0;
 	return (true);
 }
 
@@ -65,7 +66,7 @@ char
 	str = alloc(token);
 	if (!str)
 		return (NULL);
-	if (!transform(mlem, token, str))
+	if (!transform(token, str))
 	{
 		set_error_t(mlem, token, ERR_INVALID_BACKSLASH);
 		free(str);

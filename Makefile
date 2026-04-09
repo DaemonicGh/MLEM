@@ -17,16 +17,18 @@ NAMES					:=	libmlem.a libmlem.so
 
 COMMON_FILES			:=	\
 	errors/error																\
-	parsing/array parsing/file parsing/object parsing/parse parsing/start 		\
-	parsing/structure parsing/value												\
+	parsing/array parsing/file parsing/object parsing/parse parsing/pair		\
+	parsing/start parsing/structure												\
 	parsing/tokenizer/get_token parsing/tokenizer/move parsing/tokenizer/trigger\
+	parsing/values/tk_double parsing/values/tk_nbr parsing/values/value			\
 	methods/token methods/value methods/da methods/do methods/ds				\
+	utils/char_utils utils/mem_utils utils/nbr_utils utils/str_utils			\
 	utils/bs_utils utils/strchr_bs utils/streq utils/strfind utils/tkstrdup_bs
 
 LOCAL_LIBRARIES			:=
 OTHER_LIBRARIES			:= m
 
-INCLUDE_DIRECTORIES		:=	include src/_static
+INCLUDE_DIRECTORIES		:=	include src/_private
 
 # ***** FILE SETTINGS *********
 

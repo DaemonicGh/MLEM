@@ -22,11 +22,11 @@ static size_t	x_bs(const char *str, char *result)
 	size_t	n2;
 
 	n1 = strnfind(g_number_values, toupper(str[1]), 15);
-	if (n1 == ST_N1)
-		return (ST_N1);
+	if (n1 == (size_t) -1)
+		return (-1);
 	n2 = strnfind(g_number_values, toupper(str[2]), 15);
-	if (n2 == ST_N1)
-		return (ST_N1);
+	if (n2 == (size_t) -1)
+		return (-1);
 	if (result)
 	{
 		result[0] = (n1 << 4) | n2;
@@ -46,7 +46,7 @@ static size_t	x_transform(const char *str, char *result)
 		!streq(str, g_backslash_transforms[i][0]))
 		i++;
 	if (!g_backslash_transforms[i][0])
-		return (ST_N1);
+		return (-1);
 	if (result)
 	{
 		while (g_backslash_transforms[i][1][j])
