@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "errors.h"
 #include "mlem.h"
 #include "parser.h"
 
@@ -21,14 +22,17 @@ void
 }
 
 t_mlem_context
-	init_context(char *content, t_mlem_settings settings)
+	init_context(char *content, const t_mlem_value *constants)
 {
 	t_mlem_context	mlem;
 
 	mlem = (t_mlem_context){
 		.line = 1, .column = 1, .depth = -1,
-		.content = content, .settings = settings,
+		.content = content, .constants = constants,
 		.error = ERR_NONE
 	};
+	if (constants && constants->type != MLEM_TYPE_NULL
+		&& constants->type != MLEM_TYPE_OBJECT)
+		mlem.error = set_error(ERR_CONSTANT_TABLE_IS_NOT_OBJECT);
 	return (mlem);
 }

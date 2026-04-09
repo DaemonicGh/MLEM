@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-
 #include "context.h"
 #include "mlem.h"
 #include "tokens.h"

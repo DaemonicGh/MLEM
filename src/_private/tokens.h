@@ -34,6 +34,7 @@ typedef enum e_mlem_token_type
 	TK_ML_DEL_WORD		= 1 << 9,
 	TK_COMMENT			= 1 << 10,
 	TK_ML_COMMENT		= 1 << 11,
+	TK_CONSTANT			= 1 << 12
 }	t_mlem_token_type;
 
 typedef enum e_mlem_token_type_group
@@ -42,14 +43,16 @@ typedef enum e_mlem_token_type_group
 	TKG_OPEN			= TK_OPEN_UNKNOWN | TK_OPEN_ARRAY | TK_OPEN_OBJECT,
 	TKG_CLOSE			= TK_CLOSE_UNKNOWN | TK_CLOSE_ARRAY | TK_CLOSE_OBJECT,
 	TKG_COMMENT			= TK_COMMENT | TK_ML_COMMENT,
-	TKG_VALUE			= TKG_WORD | TKG_OPEN | TKG_CLOSE,
-	TKG_SIGNIFICANT		= TKG_VALUE | TK_ASSIGN,
+	TKG_VALUE			= TKG_WORD | TK_CONSTANT,
+	TKG_ALLOCD_VALUE	= TKG_WORD,
+	TKG_SIGNIFICANT		= TKG_VALUE | TKG_OPEN | TKG_CLOSE | TK_ASSIGN,
 	TKG_ML				= TK_ML_DEL_WORD | TK_ML_COMMENT,
 	TKG_WORD_EXTEND		= TK_DEL_WORD | TK_ML_DEL_WORD,
-	TKG_EXTENDS			= TKG_WORD_EXTEND | TKG_COMMENT,
+	TKG_BLANK_EXTEND	= TK_WORD | TK_CONSTANT,
+	TKG_EXTENDS			= TKG_WORD_EXTEND | TKG_BLANK_EXTEND | TKG_COMMENT,
 	TKG_ARRAY_VALUE		= TKG_VALUE,
 	TKG_OBJECT_KEY		= TKG_WORD | TKG_CLOSE,
-	TKG_OBJECT_VALUE	= TKG_WORD | TKG_OPEN
+	TKG_OBJECT_VALUE	= TKG_WORD | TKG_OPEN | TK_CONSTANT
 }	t_mlem_token_type_group;
 
 typedef const struct s_mlem_token_trigger	t_mlem_token_trigger;
@@ -117,6 +120,9 @@ static const t_mlem_token_trigger			g_token_triggers[] = {
 	.start = {"\""},
 	.end = {"\""}},
 {
+	.type = TK_CONSTANT,
+	.start = {"#"}},
+{
 	.type = TK_OPEN_OBJECT,
 	.start = {"{"}},
 {
@@ -147,7 +153,7 @@ static const char							*g_backslash_transforms[][2] = {
 
 static const char							*g_token_repr[] = {
 	"N", "W", "[", "]", "(", ")", "{", "}", "=",
-	"'", "\"", "//", "///", "/*", "*/", NULL
+	"'", "\"", "//", "///", "/*", "*/", "#", NULL
 };
 
 static const t_mlem_pair					g_value_constants[] = {

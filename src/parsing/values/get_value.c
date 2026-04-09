@@ -10,11 +10,41 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "errors.h"
+#include "mlem.h"
 #include "parser.h"
+#include "tokens.h"
 #include "utils.h"
 
 static bool
-	as_constant(t_mlem_token *token, t_mlem_value *value)
+	get_constant(t_mlem_context *mlem, t_mlem_token *token, t_mlem_value *value)
+{
+	size_t	i;
+
+	if (!mlem->constants)
+	{
+		set_error_t(mlem, token, ERR_CONSTANT_WITHOUT_TABLE);
+		return (false);
+	}
+	i = 0;
+	while (mlem->constants->val_object[i].key)
+	{
+		if (mlem_strncmp(mlem->constants->val_object[i].key, token->val,
+				token->len) == 0
+			&& !mlem->constants->val_object[i].key[token->len])
+		{
+			*value = mlem->constants->val_object[i].value;
+			value->reference = true;
+			return (true);
+		}
+		i++;
+	}
+	set_error_t(mlem, token, ERR_UNDEFINED_CONSTANT);
+	return (false);
+}
+
+static bool
+	get_word_constant(t_mlem_token *token, t_mlem_value *value)
 {
 	size_t	i;
 
@@ -50,10 +80,15 @@ t_mlem_value
 {
 	t_mlem_value	value;
 
-	value = (t_mlem_value){0};
-	if (token->type & TK_WORD)
+	if (token->type & TK_CONSTANT)
 	{
-		if (as_constant(token, &value))
+		if (get_constant(mlem, token, &value))
+			return (value);
+		return ((t_mlem_value){.val_int = mlem->error});
+	}
+	else if (token->type & TK_WORD)
+	{
+		if (get_word_constant(token, &value))
 			return (value);
 		if (is_number(token))
 		{
@@ -64,7 +99,7 @@ t_mlem_value
 	}
 	value.type = MLEM_TYPE_STRING;
 	value.val_string = tkstrndup_bs(mlem, token);
-	if (!value.val_string)
-		return ((t_mlem_value){.val_int = mlem->error});
-	return (value);
+	if (value.val_string)
+		return (value);
+	return ((t_mlem_value){.val_int = mlem->error});
 }

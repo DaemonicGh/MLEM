@@ -27,7 +27,7 @@ static t_mlem_value_type
 		return (MLEM_TYPE_NULL);
 	if (token.type & (TKG_CLOSE | TKG_OPEN))
 		return (MLEM_TYPE_ARRAY);
-	if (token.type & ~TKG_WORD)
+	if (token.type & ~TKG_VALUE)
 	{
 		set_error_l(mlem, ERR_UNEXPECTED_TOKEN);
 		return (MLEM_TYPE_NULL);
@@ -57,7 +57,7 @@ t_mlem_value
 	else if (mlem->error)
 		structure = (t_mlem_value){.val_int = mlem->error};
 	else
-		structure = (t_mlem_value){0};
+		structure = (t_mlem_value){.type = MLEM_TYPE_NULL};
 	mlem->depth--;
 	return (structure);
 }

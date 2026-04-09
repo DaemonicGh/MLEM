@@ -14,6 +14,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef enum e_mlem_error
 {
@@ -35,12 +36,16 @@ typedef enum e_mlem_error
 	ERR_NUMBER_OUT_OF_RANGE,
 	ERR_INVALID_BASE_PREFIX,
 	ERR_EMPTY_EXPONENT,
-	ERR_INVALID_EXPONENT
+	ERR_INVALID_EXPONENT,
+	ERR_CONSTANT_TABLE_IS_NOT_OBJECT,
+	ERR_CONSTANT_WITHOUT_TABLE,
+	ERR_UNDEFINED_CONSTANT
 }	t_mlem_error;
 
 typedef enum e_mlem_value_type
 {
 	MLEM_TYPE_ERROR,
+	MLEM_TYPE_END = MLEM_TYPE_ERROR,
 	MLEM_TYPE_NULL,
 	MLEM_TYPE_INT,
 	MLEM_TYPE_FLOAT,
@@ -56,6 +61,7 @@ typedef struct s_mlem_pair_s	t_mlem_pair;
 typedef struct s_mlem_value_s
 {
 	t_mlem_value_type	type;
+	bool				reference;
 	union
 	{
 		long			val_int;
@@ -73,24 +79,19 @@ typedef struct s_mlem_pair_s
 	t_mlem_value	value;
 }	t_mlem_pair;
 
-typedef struct s_mlem_settings
-{
-	bool			nothing;
-}	t_mlem_settings;
-
 // Functions
 
 t_mlem_value
 mlem_parse(
 	char *content,
-	t_mlem_settings settings
+	const t_mlem_value *constants
 	);
 
 t_mlem_value
 mlem_parse_file(
 	const char *filename,
 	char **content,
-	t_mlem_settings settings
+	const t_mlem_value *constants
 	);
 
 void

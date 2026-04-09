@@ -16,8 +16,8 @@
 
 typedef struct s_mlem_context
 {
+	const t_mlem_value		*constants;
 	char					*content;
-	t_mlem_settings			settings;
 	t_mlem_error			error;
 	size_t					line;
 	size_t					column;

@@ -26,6 +26,7 @@ static bool
 	base = get_base(mlem, token, &i);
 	if (base == -1)
 		return (false);
+	*val = 0;
 	nval = strnfind(g_number_values, mlem_toupper(token->val[i]), base - 1);
 	while (nval != -1 && i < token->len)
 	{

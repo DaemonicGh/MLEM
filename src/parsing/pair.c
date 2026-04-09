@@ -12,6 +12,7 @@
 
 #include <stdlib.h>
 
+#include "mlem.h"
 #include "parser.h"
 #include "structures.h"
 #include "errors.h"
@@ -87,26 +88,25 @@ static bool
 		t_mlem_context *mlem, t_mlem_object *object,
 		t_mlem_pair pair, t_mlem_token *value)
 {
-	if (value->type & TKG_WORD)
+	if (value->type & TKG_VALUE)
 	{
 		pair.value = get_value(mlem, value);
-		if (pair.value.type)
-		{
-			if (do_append(object, pair))
-				return (true);
+		if (!pair.value.type)
+			return (false);
+		if (do_append(object, pair))
+			return (true);
+		if (value->type & TKG_ALLOCD_VALUE)
 			free(pair.value.val_string);
-			mlem->error = set_error(ERR_MEMORY);
-		}
+		mlem->error = set_error(ERR_MEMORY);
 	}
 	else if (value->type & TKG_OPEN)
 	{
 		pair.value = parse_structure(mlem, value);
-		if (pair.value.type)
-		{
-			if (do_append(object, pair))
-				return (true);
-			mlem->error = set_error(ERR_MEMORY);
-		}
+		if (!pair.value.type)
+			return (false);
+		if (do_append(object, pair))
+			return (true);
+		mlem->error = set_error(ERR_MEMORY);
 	}
 	else
 		set_error_t(mlem, value, ERR_UNEXPECTED_TOKEN);

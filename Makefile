@@ -20,7 +20,7 @@ COMMON_FILES			:=	\
 	parsing/array parsing/file parsing/object parsing/parse parsing/pair		\
 	parsing/start parsing/structure												\
 	parsing/tokenizer/get_token parsing/tokenizer/move parsing/tokenizer/trigger\
-	parsing/values/tk_double parsing/values/tk_nbr parsing/values/value			\
+	parsing/values/tk_double parsing/values/tk_nbr parsing/values/get_value		\
 	methods/token methods/value methods/da methods/do methods/ds				\
 	utils/char_utils utils/mem_utils utils/nbr_utils utils/str_utils			\
 	utils/bs_utils utils/strchr_bs utils/streq utils/strfind utils/tkstrdup_bs

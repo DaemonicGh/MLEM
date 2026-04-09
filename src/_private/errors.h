@@ -34,7 +34,10 @@ static const char	*g_error_messages[] = {
 	"Numeric value out of 64-bit range",
 	"Invalid value base prefix",
 	"Empty value exponent",
-	"Invalid value exponent"
+	"Invalid value exponent",
+	"Given constant table isn't an object",
+	"No table given, unexpected constant",
+	"Undefined constant"
 };
 
 t_mlem_error

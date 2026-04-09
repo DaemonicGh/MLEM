@@ -47,7 +47,7 @@ void
 parse_start(t_mlem_context *mlem);
 
 t_mlem_context
-init_context(char *content, t_mlem_settings settings);
+init_context(char *content, const t_mlem_value *constants);
 
 char
 *open_and_read_file(const char *filename, t_mlem_error *error);

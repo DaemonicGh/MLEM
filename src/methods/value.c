@@ -99,18 +99,17 @@ void
 				free(val->val_object[i].key);
 			mlem_destroy_value(&val->val_object[i++].value, free_strings);
 		}
-		free(val->val_object);
+		if (!val->reference)
+			free(val->val_object);
 	}
 	else if (val->type == MLEM_TYPE_ARRAY)
 	{
 		while (val->val_array[i].type)
 			mlem_destroy_value(&val->val_array[i++], free_strings);
-		free(val->val_array);
+		if (!val->reference)
+			free(val->val_array);
 	}
-	else if (val->type == MLEM_TYPE_STRING)
-	{
-		if (free_strings)
-			free(val->val_string);
-	}
-	*val = (t_mlem_value){.val_int = ERR_NONE};
+	else if (val->type == MLEM_TYPE_STRING && !val->reference)
+		free(val->val_string);
+	*val = (t_mlem_value){0};
 }

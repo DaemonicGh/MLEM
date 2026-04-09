@@ -13,6 +13,7 @@
 #include <stdbool.h>
 
 #include "errors.h"
+#include "tokens.h"
 #include "utils.h"
 
 static t_mlem_token
@@ -23,23 +24,24 @@ static t_mlem_token
 
 	token.type = TK_WORD;
 	token.trigger = get_start_trigger_p(mlem->content, &trigger_str);
+	token.val = mlem->content;
 	if (token.trigger)
 	{
 		token.type = token.trigger->type;
-		token.val = mlem->content;
 		token.len = mlem_strlen(trigger_str);
 		move_forward(mlem, token.len);
 		if (token.type & ~TKG_EXTENDS)
 			return (token);
+		token.val = mlem->content;
+		trigger_str = "";
 	}
-	token.val = mlem->content;
-	if (token.trigger)
-		move_past_extend(mlem, &token, &trigger_str);
-	else
+	if (token.type & TKG_BLANK_EXTEND)
 		move_past_word(mlem);
+	else
+		move_past_extend(mlem, &token, &trigger_str);
 	if (mlem->content == token.val)
 		return ((t_mlem_token){0});
-	token.len = mlem->content - mlem_strlen(trigger_str) - token.val;
+	token.len = mlem->content - token.val - mlem_strlen(trigger_str);
 	return (token);
 }
 

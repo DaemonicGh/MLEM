@@ -23,16 +23,16 @@ static bool
 {
 	t_mlem_value	val;
 
-	if (token->type & TKG_WORD)
+	if (token->type & TKG_VALUE)
 	{
 		val = get_value(mlem, token);
-		if (val.type)
-		{
-			if (da_append(array, val))
-				return (true);
+		if (!val.type)
+			return (false);
+		if (da_append(array, val))
+			return (true);
+		if (token->type & TKG_ALLOCD_VALUE)
 			free(val.val_string);
-			mlem->error = set_error(ERR_MEMORY);
-		}
+		mlem->error = set_error(ERR_MEMORY);
 	}
 	else if (token->type & TKG_OPEN)
 	{
@@ -53,7 +53,10 @@ static t_mlem_value
 {
 	if (array->len + DS_CROP_THRESHOLD < array->capacity)
 		ds_resize((t_mlem_structure *)array, array->len);
-	return ((t_mlem_value){.type = MLEM_TYPE_ARRAY, .val_array = array->data});
+	return ((t_mlem_value){
+		.type = MLEM_TYPE_ARRAY,
+		.val_array = array->data
+	});
 }
 
 static bool
