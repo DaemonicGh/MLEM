@@ -220,7 +220,8 @@ struct s_mlem_template
 /**
  * Enum representing the possible errors that can occur
  * during MLEM parsing and evaluation.
- * The error value is set in int_v when an error occurs.
+ * When an error occurs, the returned value is of type 0
+ * with the error code set in int_v.
  */
 typedef enum e_mlem_error: uint32_t
 {
