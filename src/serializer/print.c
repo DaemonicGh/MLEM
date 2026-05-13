@@ -45,13 +45,18 @@ void
 {
 	t_mlem_serializer	mlem;
 
+	mlem = (t_mlem_serializer){0};
 	mlem.file = file;
-	mlem.depth = -1;
-	mlem.preceded = false;
 	if (value.type == MLEM_TYPE_OBJECT)
+	{
+		mlem.depth = -1;
 		print_object(&mlem, value);
+	}
 	else if (value.type == MLEM_TYPE_ARRAY)
+	{
+		mlem.depth = -1;
 		print_array(&mlem, value);
+	}
 	else
 		print_value(&mlem, value);
 }

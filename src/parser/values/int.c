@@ -16,16 +16,19 @@
 
 static bool
 	get_int_value_body_end(t_mlem_parser *mlem,
-		t_mlem_token *token, t_mlem_value *value, bool valid)
+		t_mlem_token *token, t_mlem_value *value, int valid)
 {
-	if (!valid)
+	if (!(valid & 1))
 	{
-		if (valid & 1)
-			set_error_t(mlem, token, ERR_EMPTY_NUMBER);
-		else if (value->int_base == 10)
+		if (value->int_base == 10)
 			set_error_t(mlem, token, ERR_INVALID_NUMBER);
 		else
 			set_error_t(mlem, token, ERR_INVALID_BASE_NUMBER);
+		return (false);
+	}
+	if (!(valid & 2))
+	{
+		set_error_t(mlem, token, ERR_EMPTY_NUMBER);
 		return (false);
 	}
 	if (value->__dummy_32)

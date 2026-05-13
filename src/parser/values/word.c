@@ -47,6 +47,32 @@ t_mlem_value
 	return (get_string_value(mlem, token, key));
 }
 
+static bool
+	is_float(t_mlem_token *token)
+{
+	size_t	i;
+
+	i = 0;
+	if (token->start.content[i] == '+'
+		|| token->start.content[i] == '-')
+		i++;
+	if (token->start.content[i] == '0')
+	{
+		if (g_mlem_data.char_data.base[
+				(int)token->start.content[i + 1]] != -1)
+			return (false);
+	}
+	while (i < token->len)
+	{
+		if (token->start.content[i] == '.'
+			|| token->start.content[i] == 'e'
+			|| token->start.content[i] == 'E')
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
 t_mlem_value
 	get_number_value(
 		t_mlem_parser *mlem, t_mlem_token *token, t_mlem_string key)
@@ -56,7 +82,7 @@ t_mlem_value
 	(void)key;
 	if (try_word_constant(token, &value))
 		return (value);
-	if (mlem_strnchrset(token->start.content, ".eE", token->len))
+	if (is_float(token))
 		return (get_float_value(mlem, token));
 	else
 		return (get_int_value(mlem, token));
