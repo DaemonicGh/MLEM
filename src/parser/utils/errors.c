@@ -47,10 +47,9 @@ t_mlem_error
 	}
 	fputs(ASCII_ERR1 "\n", stderr);
 	fputs(g_error_messages[type][0], stderr);
-	fputc('\n', stderr);
 	if (value.type)
 	{
-		fputs(" on" ASCII_ERR3 " :\n", stderr);
+		fputs(ASCII_ERR3 " :\n", stderr);
 		mlem_print(stderr, value);
 	}
 	else

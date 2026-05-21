@@ -69,6 +69,9 @@ str_eq_tkn_case(t_mlem_string string, t_mlem_token *token);
 
 // PARSER
 
+bool
+set_file_contents(t_mlem_parser *mlem);
+
 t_mlem_parser
 init_context(const char *filename, char *content,
 	const t_mlem_value outer_references);

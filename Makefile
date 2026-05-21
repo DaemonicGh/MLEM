@@ -15,26 +15,29 @@
 
 NAMES					:=	libmlem.a libmlem.so
 
+parser_files			:=	\
+	file init parse 															\
+	structures/structure structures/array structures/object						\
+	structures/object_append structures/template structures/subtemplate			\
+	structures/subtemplate_container structures/subtemplate_data 				\
+	values/float values/get_value values/int									\
+	values/reference values/string values/word									\
+	tokenizer/get_token tokenizer/next_token tokenizer/trigger					\
+	utils/errors utils/numbers utils/str_eq_tkn utils/str_utils utils/structure	\
+
+serializer_files		:=	\
+	print number structure subtemplate utils value								\
+
+api_files				:=	\
+	convert copy destroy get_path new reference structure value					\
+	array/append array/get array/new											\
+	object/append object/get object/new											\
+	template/append template/new												\
+
 common_files			:=	\
-	parser/parse parser/init													\
-	parser/structures/structure parser/structures/array							\
-	parser/structures/object parser/structures/object_append					\
-	parser/structures/template parser/structures/subtemplate					\
-	parser/structures/subtemplate_container										\
-	parser/structures/subtemplate_data 											\
-	parser/values/float parser/values/get_value parser/values/int				\
-	parser/values/reference parser/values/string parser/values/word				\
-	parser/tokenizer/get_token parser/tokenizer/next_token						\
-	parser/tokenizer/trigger													\
-	parser/utils/errors parser/utils/numbers parser/utils/str_eq_tkn			\
-	parser/utils/str_utils parser/utils/structure								\
-	serializer/print serializer/number serializer/structure						\
-	serializer/subtemplate serializer/utils serializer/value					\
-	api/convert api/copy api/destroy api/get_path								\
-	api/new api/reference api/structure api/value								\
-	api/array/append api/array/get api/array/new								\
-	api/object/append api/object/get api/object/new								\
-	api/template/append api/template/new										\
+	$(addprefix parser/,$(parser_files))										\
+	$(addprefix serializer/,$(serializer_files))								\
+	$(addprefix api/,$(api_files))												\
 	_headers/data
 
 LOCAL_LIBRARIES			:=

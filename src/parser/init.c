@@ -10,60 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "data.h"
-#include "mlem.h"
 #include "parser.h"
-
-static size_t	get_file_size(t_mlem_parser *mlem, FILE *file)
-{
-	size_t	content_size;
-
-	if (!file)
-	{
-		set_error(mlem, ERR_FILE);
-		return (0);
-	}
-	if (fseek(file, 0, SEEK_END))
-	{
-		set_error(mlem, ERR_FILE);
-		fclose(file);
-		return (0);
-	}
-	content_size = ftell(file);
-	if (!content_size || fseek(file, 0, SEEK_SET))
-	{
-		set_error(mlem, ERR_FILE);
-		fclose(file);
-		return (0);
-	}
-	return (content_size);
-}
-
-static bool
-	set_file_contents(t_mlem_parser *mlem)
-{
-	FILE	*file;
-	size_t	content_size;
-
-	file = fopen(mlem->filename, "r");
-	content_size = get_file_size(mlem, file);
-	if (!content_size)
-		return (false);
-	mlem->start = malloc(content_size + 1);
-	if (!mlem->start)
-	{
-		set_error(mlem, ERR_MEMORY);
-		fclose(file);
-		return (false);
-	}
-	fread(mlem->start, 1, content_size, file);
-	mlem->start[content_size] = '\0';
-	fclose(file);
-	return (true);
-}
 
 static bool
 	set_content(t_mlem_parser *mlem)
