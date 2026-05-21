@@ -24,7 +24,7 @@ static bool
 	mlem_tmp = *mlem;
 	if (!mlem->pos.content || get_next_token(&mlem_tmp).type == TKN_EOF)
 	{
-		set_error(mlem, ERR_EMPTY_INPUT);
+		set_error(mlem, ERR_EMPTY_FILE);
 		return (true);
 	}
 	return (false);

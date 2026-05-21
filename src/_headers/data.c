@@ -334,9 +334,9 @@ const t_mlem_subtemplate_trigger	g_subtemplates[] = {
 const char							*g_error_messages[][2] = {
 {"Empty value", "This value was probably set by (t_mlem_value){0}"},
 {"Unexpected error"},
-{"Unable to open file"},
 {"Memory error"},
-{"Given string is null"},
+{"Unable to open file"},
+{"File is empty"},
 {"Reference table isn't an array"},
 {"Unexpected token"},
 {"Invalid backslash symbol"},

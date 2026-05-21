@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <asm-generic/errno-base.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -18,6 +19,11 @@
 
 static bool	file_error(t_mlem_parser *mlem, FILE *file)
 {
+	if (errno == EAGAIN)
+	{
+		mlem->start = NULL;
+		return (true);
+	}
 	set_error_v(mlem, ERR_FILE, (t_mlem_value){
 		.type = MLEM_TYPE_STRING, .string_v = strerror(errno)});
 	if (file)
