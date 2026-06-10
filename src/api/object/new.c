@@ -21,11 +21,11 @@ t_mlem_value
 	t_mlem_value	object;
 
 	object.type = MLEM_TYPE_OBJECT;
-	object.object_v = malloc(sizeof(t_mlem_pair) * capacity);
-	if (!object.object_v)
+	object.objectv.value = malloc(sizeof(t_mlem_pair) * capacity);
+	if (!object.objectv.value)
 		return ((t_mlem_value){0});
-	object.object_len = 0;
-	object.object_extra_capacity = capacity;
+	object.objectv.len = 0;
+	object.objectv.extra_capacity = capacity;
 	return (object);
 }
 
@@ -42,7 +42,7 @@ t_mlem_value
 	i = 0;
 	va_start(va, len);
 	while (i < len)
-		object.object_v[i++] = va_arg(va, t_mlem_pair);
+		object.objectv.value[i++] = va_arg(va, t_mlem_pair);
 	va_end(va);
 	return (object);
 }

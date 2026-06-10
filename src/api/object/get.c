@@ -30,10 +30,10 @@ t_mlem_value
 
 	i = 0;
 	object = mlem_dereference(object);
-	while (i < object.object_len)
+	while (i < object.objectv.len)
 	{
-		if (keycmp(object.object_v[i].key, key))
-			return (&object.object_v[i].value);
+		if (keycmp(object.objectv.value[i].key, key))
+			return (&object.objectv.value[i].value);
 		i++;
 	}
 	return (NULL);
@@ -46,10 +46,10 @@ t_mlem_string
 
 	i = 0;
 	object = mlem_dereference(object);
-	while (i < object.object_len)
+	while (i < object.objectv.len)
 	{
-		if (mlem_equal(object.object_v[i].value, value))
-			return (object.object_v[i].key);
+		if (mlem_equal(object.objectv.value[i].value, value))
+			return (object.objectv.value[i].key);
 		i++;
 	}
 	return (NULL);
@@ -62,9 +62,9 @@ int64_t
 
 	i = 0;
 	object = mlem_dereference(object);
-	while (i < object.object_len)
+	while (i < object.objectv.len)
 	{
-		if (keycmp(object.object_v[i].key, key))
+		if (keycmp(object.objectv.value[i].key, key))
 			return (i);
 		i++;
 	}
@@ -78,9 +78,9 @@ int64_t
 
 	i = 0;
 	object = mlem_dereference(object);
-	while (i < object.object_len)
+	while (i < object.objectv.len)
 	{
-		if (mlem_equal(object.object_v[i].value, value))
+		if (mlem_equal(object.objectv.value[i].value, value))
 			return (i);
 		i++;
 	}

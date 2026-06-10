@@ -14,6 +14,7 @@
 #include <stdlib.h>
 
 #include "data.h"
+#include "extras.h"
 #include "mlem.h"
 
 bool
@@ -21,17 +22,17 @@ bool
 {
 	void	*tmp;
 
-	if (new_capacity > object->object_len + UINT16_MAX)
-		new_capacity = object->object_len + UINT16_MAX;
+	if (new_capacity > object->objectv.len + UINT16_MAX)
+		new_capacity = object->objectv.len + UINT16_MAX;
 	object = mlem_dereference_ptr(object);
-	tmp = realloc(object->object_v, sizeof(t_mlem_pair) * new_capacity);
+	tmp = realloc(object->objectv.value, sizeof(t_mlem_pair) * new_capacity);
 	if (!tmp)
 		return (false);
-	object->object_v = tmp;
-	if (new_capacity > object->object_len)
-		object->object_extra_capacity = new_capacity - object->object_len;
+	object->objectv.value = tmp;
+	if (new_capacity > object->objectv.len)
+		object->objectv.extra_capacity = new_capacity - object->objectv.len;
 	else
-		object->object_extra_capacity = 0;
+		object->objectv.extra_capacity = 0;
 	return (true);
 }
 
@@ -40,15 +41,30 @@ bool
 		t_mlem_value *object, t_mlem_string key, t_mlem_value value)
 {
 	object = mlem_dereference_ptr(object);
-	if (object->object_extra_capacity == 0)
+	if (object->objectv.extra_capacity == 0)
 	{
 		if (!mlem_object_resize(
-				object, object->object_len * STRUCTURE_GROW_RATIO))
+				object, object->objectv.len * STRUCTURE_GROW_RATIO))
 			return (false);
 	}
-	object->object_v[object->object_len] = (t_mlem_pair){
+	object->objectv.value[object->objectv.len] = (t_mlem_pair){
 		.key = key, .value = value};
-	object->object_len++;
-	object->object_extra_capacity--;
+	object->objectv.len++;
+	object->objectv.extra_capacity--;
+	return (true);
+}
+
+bool
+	mlem_object_alloc_append(
+		t_mlem_value *object, t_mlem_string key, t_mlem_value value)
+{
+	key = mlem_strdup(key);
+	if (!key)
+		return (false);
+	if (!mlem_object_append(object, key, value))
+	{
+		free(key);
+		return (false);
+	}
 	return (true);
 }

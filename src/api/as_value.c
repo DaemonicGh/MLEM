@@ -19,7 +19,7 @@ t_mlem_int
 		return (fallback);
 	value = mlem_dereference_ptr(value);
 	if (mlem_tweak(value, MLEM_TYPE_INT))
-		return (value->int_v);
+		return (value->intv.value);
 	else
 		return (fallback);
 }
@@ -31,7 +31,7 @@ t_mlem_float
 		return (fallback);
 	value = mlem_dereference_ptr(value);
 	if (mlem_tweak(value, MLEM_TYPE_FLOAT))
-		return (value->float_v);
+		return (value->floatv.value);
 	else
 		return (fallback);
 }
@@ -43,7 +43,7 @@ t_mlem_bool
 		return (fallback);
 	value = mlem_dereference_ptr(value);
 	if (mlem_tweak(value, MLEM_TYPE_BOOL))
-		return (value->bool_v);
+		return (value->boolv.value);
 	else
 		return (fallback);
 }
@@ -55,7 +55,7 @@ t_mlem_string
 		return (fallback);
 	value = mlem_dereference_ptr(value);
 	if (mlem_tweak(value, MLEM_TYPE_STRING))
-		return (value->string_v);
+		return (value->strv.value);
 	else
 		return (fallback);
 }

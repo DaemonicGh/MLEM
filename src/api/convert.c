@@ -18,17 +18,17 @@ bool
 	if (type == MLEM_TYPE_INT)
 	{
 		if (value->type == MLEM_TYPE_FLOAT
-			&& (t_mlem_int)value->float_v == value->float_v)
-			*value = mlem_int(value->float_v);
+			&& (t_mlem_int)value->floatv.value == value->floatv.value)
+			*value = mlem_int(value->floatv.value);
 		else if (value->type == MLEM_TYPE_BOOL)
-			*value = mlem_int(value->bool_v);
+			*value = mlem_int(value->boolv.value);
 	}
 	else if (type == MLEM_TYPE_FLOAT)
 	{
 		if (value->type == MLEM_TYPE_INT)
-			*value = mlem_float(value->int_v);
+			*value = mlem_float(value->intv.value);
 		else if (value->type == MLEM_TYPE_BOOL)
-			*value = mlem_float(value->bool_v);
+			*value = mlem_float(value->boolv.value);
 	}
 	return (value->type == type);
 }
@@ -41,14 +41,14 @@ bool
 	if (type == MLEM_TYPE_INT)
 	{
 		if (value->type == MLEM_TYPE_FLOAT)
-			*value = mlem_int(value->float_v);
+			*value = mlem_int(value->floatv.value);
 	}
 	else if (type == MLEM_TYPE_BOOL)
 	{
 		if (value->type == MLEM_TYPE_INT)
-			*value = mlem_bool(value->int_v);
+			*value = mlem_bool(value->intv.value);
 		else if (value->type == MLEM_TYPE_FLOAT)
-			*value = mlem_bool(value->float_v);
+			*value = mlem_bool(value->floatv.value);
 	}
 	return (value->type == type);
 }

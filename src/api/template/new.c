@@ -21,7 +21,7 @@ t_mlem_value
 	t_mlem_value	template;
 
 	template.type = MLEM_TYPE_TEMPLATE;
-	template.template_v = malloc(sizeof(t_mlem_template)
+	template.templatev.value = malloc(sizeof(t_mlem_template)
 			+ sizeof(t_mlem_subtemplate) * capacity);
 	if (!template.template_v)
 		return ((t_mlem_value){0});

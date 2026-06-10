@@ -12,52 +12,60 @@
 
 #include <stdlib.h>
 
-#include "data.h"
 #include "mlem.h"
 
 void
-	destroy_reference(t_mlem_value reference)
+	destroy_reference(t_mlem_value reference,
+		bool free_keys, bool free_strings, bool free_ref_names)
 {
-	reference.reference_v->ref_count--;
-	if (reference.reference_v->ref_count == 0)
+	reference.refv.value->ref_count--;
+	if (reference.refv.value->ref_count == 0)
 	{
-		free(reference.reference_v->name);
-		mlem_destroy(reference.reference_v->value);
-		free(reference.reference_v);
+		if (free_ref_names)
+			free(reference.refv.value->name);
+		mlem_destroy_ex(reference.refv.value->value,
+			free_keys, free_strings, free_ref_names);
+		free(reference.refv.value);
 	}
 }
 
 void
-	destroy_array(t_mlem_value array)
+	destroy_array(t_mlem_value array,
+		bool free_keys, bool free_strings, bool free_ref_names)
 {
 	size_t	i;
 
 	i = 0;
-	while (i < array.array_len)
+	while (i < array.arrayv.len)
 	{
-		mlem_destroy(array.array_v[i]);
+		mlem_destroy_ex(array.arrayv.value[i],
+			free_keys, free_strings, free_ref_names);
 		i++;
 	}
-	free(array.array_v);
+	free(array.arrayv.value);
 }
 
 void
-	destroy_object(t_mlem_value object)
+	destroy_object(t_mlem_value object,
+		bool free_keys, bool free_strings, bool free_ref_names)
 {
 	size_t	i;
 
 	i = 0;
-	while (i < object.object_len)
+	while (i < object.objectv.len)
 	{
-		if (object.object_v[i].value.type != MLEM_TYPE_REFERENCE
-			|| !object.object_v[i].value.reference_owner)
-			free(object.object_v[i].key);
-		mlem_destroy(object.object_v[i].value);
+		if (free_keys
+			&& (object.objectv.value[i].value.type != MLEM_TYPE_REFERENCE
+				|| !object.objectv.value[i].value.refv.is_owner))
+			free(object.objectv.value[i].key);
+		mlem_destroy_ex(object.objectv.value[i].value,
+			free_keys, free_strings, free_ref_names);
 		i++;
 	}
-	free(object.object_v);
+	free(object.objectv.value);
 }
 
+/*
 void
 	destroy_template(t_mlem_value template)
 {
@@ -66,7 +74,7 @@ void
 	i = 0;
 	if (template.template_v->fallback.type)
 		destroy_reference((t_mlem_value){.type = MLEM_TYPE_REFERENCE,
-			.reference_v = template.template_v->fallback.reference_v});
+			.refv.value = template.template_v->fallback.refv.value});
 	if (template.template_v->structure.type)
 		destroy_array(template.template_v->structure);
 	while (i < template.template_len)
@@ -79,18 +87,27 @@ void
 	}
 	free(template.template_v);
 }
+*/
+
+void
+	mlem_destroy_ex(t_mlem_value value,
+		bool free_keys, bool free_strings, bool free_ref_names)
+{
+	if (value.type == MLEM_TYPE_STRING)
+	{
+		if (free_strings)
+			free(value.strv.value);
+	}
+	else if (value.type == MLEM_TYPE_REFERENCE)
+		destroy_reference(value, free_keys, free_strings, free_ref_names);
+	else if (value.type == MLEM_TYPE_ARRAY)
+		destroy_array(value, free_keys, free_strings, free_ref_names);
+	else if (value.type == MLEM_TYPE_OBJECT)
+		destroy_object(value, free_keys, free_strings, free_ref_names);
+}
 
 void
 	mlem_destroy(t_mlem_value value)
 {
-	if (value.type == MLEM_TYPE_STRING)
-		free(value.string_v);
-	else if (value.type == MLEM_TYPE_REFERENCE)
-		destroy_reference(value);
-	else if (value.type == MLEM_TYPE_ARRAY)
-		destroy_array(value);
-	else if (value.type == MLEM_TYPE_OBJECT)
-		destroy_object(value);
-	else if (value.type == MLEM_TYPE_TEMPLATE)
-		destroy_template(value);
+	mlem_destroy_ex(value, true, true, true);
 }

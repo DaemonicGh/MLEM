@@ -15,7 +15,7 @@
 uint32_t
 	mlem_length(t_mlem_value value)
 {
-	return (mlem_dereference(value).array_len);
+	return (mlem_dereference(value).arrayv.len);
 }
 
 bool
@@ -26,7 +26,5 @@ bool
 		return (mlem_array_append(structure, value));
 	else if (structure->type == MLEM_TYPE_OBJECT)
 		return (mlem_object_append(structure, key, value));
-	else if (structure->type == MLEM_TYPE_TEMPLATE)
-		return (mlem_template_append(structure, value));
 	return (false);
 }

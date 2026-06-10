@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 #include "parser.h"
 
 bool
@@ -19,11 +20,12 @@ bool
 	size_t	i;
 
 	i = 0;
-	while (i < array.array_len && array.array_v[i].type == MLEM_TYPE_STRING)
+	while (i < array.arrayv.len
+		&& array.arrayv.value[i].type == MLEM_TYPE_STRING)
 		i++;
-	if (i < array.array_len)
+	if (i < array.arrayv.len)
 		return (false);
-	subtemplate.array_v = array.array_v;
+	subtemplate.arrayv.value = array.arrayv.value;
 	return (true);
 }
 
@@ -34,11 +36,12 @@ bool
 	size_t	i;
 
 	i = 0;
-	while (i < array.array_len && array.array_v[i].type == MLEM_TYPE_STRING)
+	while (i < array.arrayv.len
+		&& array.arrayv.value[i].type == MLEM_TYPE_STRING)
 		i++;
-	if (i < array.array_len)
+	if (i < array.arrayv.len)
 		return (false);
-	subtemplate.array_v = array.array_v;
+	subtemplate.arrayv.value = array.arrayv.value;
 	return (true);
 }
 
@@ -51,3 +54,4 @@ bool
 	(void)subtemplate;
 	return (false);
 }
+*/

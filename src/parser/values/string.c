@@ -23,11 +23,11 @@ static bool
 	ret = transform(&token->start.content[++(*i)], &transformed);
 	if (ret)
 	{
-		string->string_v[(*j)++] = transformed;
+		string->strv.value[(*j)++] = transformed;
 		*i += ret;
 	}
-	else if (string->string_flavor & MLEM_STR_LENIENT_ESCAPE)
-		string->string_v[(*j)++] = token->start.content[(*i)++];
+	else if (string->strv.flavor & MLEM_STR_LENIENT_ESCAPE)
+		string->strv.value[(*j)++] = token->start.content[(*i)++];
 	else
 		return (false);
 	return (true);
@@ -44,16 +44,16 @@ static bool
 	while (i < token->len)
 	{
 		if (token->start.content[i] == '\\'
-			&& string->string_flavor & MLEM_STR_ESCAPE)
+			&& string->strv.flavor & MLEM_STR_ESCAPE)
 		{
 			if (!handle_transform(token, string, &i, &j))
 				return (false);
 		}
 		else
-			string->string_v[j++] = token->start.content[i++];
+			string->strv.value[j++] = token->start.content[i++];
 	}
-	string->string_v[j] = 0;
-	string->string_len = j;
+	string->strv.value[j] = 0;
+	string->strv.len = j;
 	return (true);
 }
 
@@ -64,10 +64,10 @@ t_mlem_value
 	t_mlem_value	value;
 
 	(void)key;
-	value = (t_mlem_value){.type = MLEM_TYPE_STRING};
-	value.string_flavor = token->trigger->data;
-	value.string_v = malloc(token->len + 1);
-	if (!value.string_v)
+	value = (t_mlem_value){.strv = {.type = MLEM_TYPE_STRING}};
+	value.strv.flavor = token->trigger->data;
+	value.strv.value = malloc(token->len + 1);
+	if (!value.strv.value)
 	{
 		set_error(mlem, ERR_MEMORY);
 		return ((t_mlem_value){0});
@@ -75,12 +75,12 @@ t_mlem_value
 	if (!set_string(token, &value))
 	{
 		set_error_t(mlem, token, ERR_INVALID_BACKSLASH);
-		free(value.string_v);
+		free(value.strv.value);
 		return ((t_mlem_value){0});
 	}
-	if (token->len - value.string_len > 255)
-		value.string_extra_capacity = 255;
+	if (token->len - value.strv.len > 255)
+		value.strv.extra_capacity = 255;
 	else
-		value.string_extra_capacity = token->len - value.string_len;
+		value.strv.extra_capacity = token->len - value.strv.len;
 	return (value);
 }

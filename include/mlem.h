@@ -10,215 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+//  ▒▒▒▒▒▒  ██▄    ▄██ ███       ████████████▄    ▄██
+//  ▒▒      ████▄▄████  ██       ▀▀         ▀██▄▄████
+//  ▒▒      ██ ▀██▀ ██  ██       ██████    █▄ ▀██▀ ██     ▒▒
+//  ▒▒      ██      ██  ██       ██        ██      ██     ▒▒
+//  ▒▒      ██      ██  ██       ▀▀        ██      ██     ▒▒▒▒▒
+//  ▒▒▒▒▒▒  ██      ███ █████████████████  ██      ██  ▒▒ ▒▒ ▒▒
+
 #pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
-/**
- * Enum representing the possible types of a value in the MLEM format.
- *
- * Types indicate the value's data type
- * and how it should be parsed and printed.
- *
- * TYPE_NONE represents an error and should not be used.
- */
-typedef enum e_mlem_value_type: uint16_t
-{
-	MLEM_TYPE_NONE			= 0x0000,
-	MLEM_TYPE_NULL			= 0x0001,
-	MLEM_TYPE_INT			= 0x0010,
-	MLEM_TYPE_FLOAT			= 0x0020,
-	MLEM_TYPE_BOOL			= 0x0040,
-	MLEM_TYPE_STRING		= 0x0100,
-	MLEM_TYPE_REFERENCE		= 0x0200,
-	MLEM_TYPE_USER_POINTER	= 0x0400,
-	MLEM_TYPE_ARRAY			= 0x1000,
-	MLEM_TYPE_OBJECT		= 0x2000,
-	MLEM_TYPE_TEMPLATE		= 0x4000
-}	t_mlem_value_type;
+#include ".mlem_values.h"
 
-/**
- * Enum representing the possible flavors of a string value.
- *
- * Flavors indicate the type of string value being parsed,
- * how it should behave and how it should be printed.
- */
-enum e_mlem_string_flavor: uint8_t
-{
-	MLEM_STR_UNQUOTED		= 0x01,
-	MLEM_STR_QUOTED			= 0x02,
-	MLEM_STR_DQUOTED		= 0x04,
-	MLEM_STR_3QUOTED		= 0x08,
-	MLEM_STR_3DQUOTED		= 0x10,
-	MLEM_STR_MULTILINE		= (
-		MLEM_STR_DQUOTED | MLEM_STR_3QUOTED | MLEM_STR_3DQUOTED),
-	MLEM_STR_ESCAPE	= (
-		MLEM_STR_UNQUOTED | MLEM_STR_QUOTED | MLEM_STR_DQUOTED),
-	MLEM_STR_LENIENT_ESCAPE	= MLEM_STR_UNQUOTED
-};
-
-/**
- * Represents a value in the MLEM format.
- *
- * @type		indicates the value's type,
- * @[type]_v	contains the actual value.
- * Values specific to a type are prefixed with the type name.
- */
-typedef struct s_mlem_value			t_mlem_value;
-
-/**
- * Represents a key-value pair in the MLEM format,
- * used by objects.
- *
- * @key		the key of the pair,
- * @value	the value of the pair.
- */
-typedef struct s_mlem_pair			t_mlem_pair;
-
-/**
- * Represents a reference to a value in the MLEM format.
- *
- * @name		the name of the reference,
- * @ref_count	the number of values referencing this value,
- * @value		the value being referenced.
- */
-typedef struct s_mlem_reference		*t_mlem_reference;
-
-typedef struct s_mlem_value			t_mlem_template_struct;
-typedef struct s_mlem_value			t_mlem_subtemplate;
-
-/**
- * Represents a template in the MLEM format.
- *
- * @flags			the flags of the template,
- * @fallback		the fallback value of the template,
- * @subtemplates	the separate checks in the template.
- */
-typedef struct s_mlem_template		*t_mlem_template;
-
-/**
- * MLEM integer type.
- *
- * int_base is set to specify the base the intger was parsed from.
- */
-typedef int64_t						t_mlem_int;
-
-/**
- * MLEM float type.
- *
- * float_exponent is set to specify the exponent the float was parsed with.
- */
-typedef double						t_mlem_float;
-
-/**
- * MLEM boolean type.
- */
-typedef bool						t_mlem_bool;
-
-/**
- * MLEM string type.
- *
- * string_flavor is set to specify the type of the string.
- * string_len is set to specify the length of the string.
- * string_extra_capacity is set to specify the unused space in the allocation.
- */
-typedef char						*t_mlem_string;
-
-/**
- * MLEM array type.
- *
- * array_len is set to specify the length of the array.
- * array_extra_capacity is set to specify the unused space in the allocation.
- */
-typedef t_mlem_value				*t_mlem_array;
-
-/**
- * MLEM object type.
- *
- * object_len is set to specify the length of the object.
- * object_extra_capacity is set to specify the unused space in the allocation.
- */
-typedef t_mlem_pair					*t_mlem_object;
-
-struct s_mlem_value
-{
-	t_mlem_value_type		type;
-	union
-	{
-		int16_t					int_base;
-		int16_t					float_exponent;
-		struct
-		{
-			uint8_t					string_extra_capacity;
-			uint8_t					string_flavor;
-		};
-		bool					reference_owner;
-		uint16_t				array_extra_capacity;
-		uint16_t				object_extra_capacity;
-		uint16_t				template_extra_capacity;
-		uint16_t				__dummy_16;
-	};
-	union
-	{
-		uint32_t				string_len;
-		uint32_t				array_len;
-		uint32_t				object_len;
-		uint32_t				template_len;
-		uint32_t				__dummy_32;
-	};
-	union
-	{
-		t_mlem_int				int_v;
-		t_mlem_float			float_v;
-		t_mlem_bool				bool_v;
-		t_mlem_string			string_v;
-		t_mlem_reference		reference_v;
-		t_mlem_array			array_v;
-		t_mlem_object			object_v;
-		t_mlem_template			template_v;
-		void					*pointer_v;
-		uint32_t				__dummy_v;
-	};
-};
-
-struct s_mlem_reference
-{
-	t_mlem_string			name;
-	uint32_t				ref_count;
-	bool					is_implicit;
-	t_mlem_value			value;
-};
-
-struct s_mlem_pair
-{
-	t_mlem_string			key;
-	t_mlem_value			value;
-};
-
-typedef enum e_mlem_template_flag: uint32_t
-{
-	MLEM_TPF_NONE			= 0x0000,
-	MLEM_TPF_REQUIRED		= 0x0001,
-	MLEM_TPF_STRICT_TYPE	= 0x0002,
-	MLEM_TPF_STRICT_BOUNDS	= 0x0004,
-	MLEM_TPF_NO_REFERENCE	= 0x0010,
-	MLEM_TPF_NO_WILDCARD	= 0x0020,
-	MLEM_TPF_CLAMP			= 0x0100,
-	MLEM_TPF_CONVERT		= 0x0200,
-	MLEM_TPF_FLATTEN		= 0x0400,
-}	t_mlem_template_flag;
-
-struct s_mlem_template
-{
-	t_mlem_template_flag	flags;
-	t_mlem_template_struct	structure;
-	t_mlem_value			fallback;
-	t_mlem_subtemplate		subtemplates[];
-};
-
-// FUNCTIONS
+// PARSE
 
 /**
  * Opens and parses the given file and returns its root value.
@@ -237,7 +44,23 @@ mlem_parse(
 	const t_mlem_value constants
 	);
 
-// VALUES
+// SERIALIZE
+
+/**
+ * Prints the given value recursively to the given file.
+ */
+void
+mlem_print(FILE *file, t_mlem_value value);
+
+/**
+ * Prints the given value recursively to the specified file.
+ * The file will be created if it does not exist, and overwritten otherwise.
+ * Returns false if the file could not be opened or written to.
+ */
+bool
+mlem_print_to_file(const char *filename, t_mlem_value value);
+
+// CREATE
 
 /**
  * Creates and returns a MLEM integer value.
@@ -266,26 +89,71 @@ mlem_string(t_mlem_string value);
 /**
  * Creates and returns a MLEM null value.
  *
- * Do not confuse a null value with an absent value, which signifies an error.
+ * Do not confuse a null value with
+ * an absent/none value, which signifies an error.
  * A null value is perfectly fine to manipulate
  */
 t_mlem_value
 mlem_null(void);
 
 /**
- * Returns the type of the given value or its reference.
+ * Returns a new empty array with the given capacity.
+ *
+ * The array allocation can fail, then
+ * the returned value will be zero padded.
+ * The array must be freed using mlem_destroy().
  */
-t_mlem_value_type
-mlem_type(t_mlem_value value);
+t_mlem_value
+mlem_array_empty(uint32_t capacity);
 
 /**
- * Returns true if the two values or their references are equal.
+ * Returns a new array with the given values.
  *
- * Two values are considered equal if they have the same type and value.
- * Pointers are compared by their memory address.
+ * The array allocation can fail, then
+ * the returned value will be zero padded.
+ * Values must be of type t_mlem_value.
+ * The array must be freed using mlem_destroy().
  */
-bool
-mlem_equal(t_mlem_value value1, t_mlem_value value2);
+t_mlem_value
+mlem_array(uint32_t len, ...);
+
+/**
+ * Returns an empty object with the given capacity.
+ *
+ * The object allocation can fail, then
+ * the returned value will be zero padded.
+ * The object must be freed using mlem_destroy().
+ */
+t_mlem_value
+mlem_object_empty(uint32_t capacity);
+
+/**
+ * Returns an object with the given key-value pairs.
+ *
+ * The object allocation can fail, then
+ * the returned value will be zero padded.
+ * Values must be of type t_mlem_pair.
+ * The object must be freed using mlem_destroy().
+ */
+t_mlem_value
+mlem_object(uint32_t len, ...);
+
+/**
+ * Creates and returns a MLEM value
+ * with the specified type and value.
+ */
+t_mlem_value
+mlem_raw_value(t_mlem_value_type type, uint64_t value);
+
+/**
+ * Creates and returns a MLEM value
+ * with the specified type, value and metadata.
+ */
+t_mlem_value
+mlem_raw_value_ex(t_mlem_value_type type,
+	uint64_t value, uint32_t data_32, uint16_t data_16);
+
+// CONVERT
 
 /**
  * Tweaks the type of the given value to the specified type.
@@ -298,25 +166,82 @@ mlem_tweak(t_mlem_value *value, t_mlem_value_type type);
 
 /**
  * Converts the given value to the specified type.
- * Changes may loose data.Use mlem_tweak() to only try lossless conversions.
+ * Changes may loose data. Use mlem_tweak() to only try lossless conversions.
  * Returns false if no change was possible.
  */
 bool
 mlem_convert(t_mlem_value *value, t_mlem_value_type type);
 
 /**
- * Prints the given value recursively to the given file.
+ * Tweaks and returns the given value pointer
+ * to have the same type as the fallback.
+ *
+ * The value can't be tweaked or
+ * if the value is NULL, the fallback is returned.
  */
-void
-mlem_print(FILE *file, t_mlem_value value);
+t_mlem_value
+mlem_fallback(t_mlem_value *value, t_mlem_value fallback);
 
 /**
- * Prints the given value recursively to the specified file.
- * The file will be created if it does not exist, and overwritten otherwise.
- * Returns false if the file could not be opened or written to.
+ * Tweaks and returns the given value as an integer.
+ *
+ * The value can't be tweaked, or
+ * if the value is NULL, the fallback is returned.
+ */
+t_mlem_int
+mlem_as_int(t_mlem_value *value, t_mlem_int fallback);
+
+/**
+ * Tweaks and returns the given value as a float.
+ *
+ * The value can't be tweaked, or
+ * if the value is NULL, the fallback is returned.
+ */
+t_mlem_float
+mlem_as_float(t_mlem_value *value, t_mlem_float fallback);
+
+/**
+ * Tweaks and returns the given value as a boolean.
+ *
+ * The value can't be tweaked, or
+ * if the value is NULL, the fallback is returned.
+ */
+t_mlem_bool
+mlem_as_bool(t_mlem_value *value, t_mlem_bool fallback);
+
+/**
+ * Tweaks and returns the given value as a string.
+ *
+ * The value can't be tweaked, or
+ * if the value is NULL, the fallback is returned.
+ */
+t_mlem_string
+mlem_as_string(t_mlem_value *value, t_mlem_string fallback);
+
+// VALUES
+
+/**
+ * Returns the type of the given value or its reference.
+ */
+t_mlem_value_type
+mlem_type(t_mlem_value value);
+
+/**
+ * Returns true if the given value's type matches one of the given type
+ *
+ * @count	The amount of type to check for.
  */
 bool
-mlem_print_to_file(const char *filename, t_mlem_value value);
+mlem_is_type(t_mlem_value value, uint32_t count, ...);
+
+/**
+ * Returns true if the two values or their references are equal.
+ *
+ * Two values are considered equal if they have the same type and value.
+ * Pointers are compared by their memory address.
+ */
+bool
+mlem_equal(t_mlem_value value1, t_mlem_value value2);
 
 /**
  * Returns a deep copy of the given value.
@@ -335,13 +260,63 @@ mlem_copy(t_mlem_value value);
 void
 mlem_destroy(t_mlem_value value);
 
+/**
+ * Frees the memory used by the given value, following the given parameters.
+ *
+ * References are only freed if there's no value referencing it.
+ */
+void
+mlem_destroy_ex(t_mlem_value value,
+	bool free_keys, bool free_strings, bool free_ref_names);
+
+/**
+ * Returns the length of the given value.
+ *
+ * Returns 0 if the value is not an array, object, template or string.
+ */
+uint32_t
+mlem_length(t_mlem_value value);
+
+/**
+ * Returns the value at the given path from the given value.
+ *
+ * The path is an array containing int and string values
+ * specifying keys and indices.
+ * Returns NULL if the value is not found.
+ */
+t_mlem_value
+*mlem_get_from_path(t_mlem_value value, t_mlem_value path);
+
+/**
+ * Appends the given key-value pair to the given structure.
+ *
+ * The key is only necessary for objects.
+ * Returns true if the value was appended successfully, false otherwise.
+ * Returns false if the value isn't an array, object, or template.
+ */
+bool
+mlem_append(t_mlem_value *structure,
+	t_mlem_string key, t_mlem_value value);
+
 // REFERENCES
 
 /**
  * Returns a new reference with the given name and value.
+ *
+ * The reference allocation can fail, then
+ * the returned value will be zero padded.
+ * The reference must be freed using mlem_destroy().
  */
 t_mlem_value
-mlem_reference(t_mlem_string name, t_mlem_value value);
+mlem_reference_create(t_mlem_string name, t_mlem_value value);
+
+/**
+ * Returns a copy of the given reference value.
+ *
+ * The value must be freed using mlem_destroy().
+ */
+t_mlem_value
+mlem_reference(t_mlem_value reference);
 
 /**
  * Returns the value of the given reference.
@@ -356,23 +331,6 @@ t_mlem_value
 *mlem_dereference_ptr(t_mlem_value *value);
 
 // ARRAYS
-
-/**
- * Returns a new empty array with the given capacity.
- *
- * The array must be freed using mlem_destroy().
- */
-t_mlem_value
-mlem_array_empty(uint32_t capacity);
-
-/**
- * Returns a new array with the given values.
- *
- * Values must be of type t_mlem_value.
- * The array must be freed using mlem_destroy().
- */
-t_mlem_value
-mlem_array(uint32_t len, ...);
 
 /**
  * Resizes the given array to the given capacity.
@@ -409,23 +367,6 @@ mlem_array_index(t_mlem_value array, t_mlem_value value);
 // OBJECTS
 
 /**
- * Returns an empty object with the given capacity.
- *
- * The object must be freed using mlem_destroy().
- */
-t_mlem_value
-mlem_object_empty(uint32_t capacity);
-
-/**
- * Returns an object with the given key-value pairs.
- *
- * Values must be of type t_mlem_pair.
- * The object must be freed using mlem_destroy().
- */
-t_mlem_value
-mlem_object(uint32_t len, ...);
-
-/**
  * Resizes the given object to the given capacity.
  *
  * Returns true if the array was resized successfully, false otherwise.
@@ -440,6 +381,16 @@ mlem_object_resize(t_mlem_value *object, uint32_t capacity);
  */
 bool
 mlem_object_append(
+	t_mlem_value *object, t_mlem_string key, t_mlem_value value);
+
+/**
+ * Allocates the given key on the heap and
+ * appends the given value to the given object.
+ *
+ * Returns true if the value was appended successfully, false otherwise.
+ */
+bool
+mlem_object_alloc_append(
 	t_mlem_value *object, t_mlem_string key, t_mlem_value value);
 
 /**
@@ -473,78 +424,3 @@ mlem_object_index(t_mlem_value object, t_mlem_value value);
  */
 int64_t
 mlem_object_key_index(t_mlem_value object, t_mlem_string key);
-
-// TEMPLATES
-
-/**
- * Returns an empty template with the given capacity.
- *
- * The template must be freed using mlem_destroy().
- */
-t_mlem_value
-mlem_template_empty(uint32_t capacity);
-
-/**
- * Returns a template with the given values.
- *
- * Values must be of type t_mlem_subtemplate.
- * The template must be freed using mlem_destroy().
- */
-t_mlem_value
-mlem_template(uint32_t len, ...);
-
-/**
- * Resizes the given template to the given capacity.
- *
- * Returns true if the array was resized successfully, false otherwise.
- */
-bool
-mlem_template_resize(t_mlem_value *template, uint32_t capacity);
-
-/**
- * Appends the given value to the given template.
- *
- * Returns true if the value was appended successfully, false otherwise.
- */
-bool
-mlem_template_append(t_mlem_value *template, t_mlem_subtemplate value);
-
-/**
- * Matches the given value against the given template.
- *
- * Returns true if the value matches the template, false otherwise.
- */
-bool
-mlem_match_template(
-	t_mlem_value *value, t_mlem_value *parent, t_mlem_value template);
-
-// COMMON
-
-/**
- * Returns the length of the given value.
- *
- * Returns 0 if the value is not an array, object, template or string.
- */
-uint32_t
-mlem_length(t_mlem_value value);
-
-/**
- * Returns the value at the given path from the given value.
- *
- * The path is an array containing int and string values
- * specifying keys and indices.
- * Returns NULL if the value is not found.
- */
-t_mlem_value
-*mlem_get_from_path(t_mlem_value value, t_mlem_value path);
-
-/**
- * Appends the given key-value pair to the given structure.
- *
- * The key is only necessary for objects.
- * Returns true if the value was appended successfully, false otherwise.
- * Returns false if the value isn't an array, object, or template.
- */
-bool
-mlem_append(t_mlem_value *structure,
-	t_mlem_string key, t_mlem_value value);

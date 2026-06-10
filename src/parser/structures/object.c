@@ -69,6 +69,6 @@ t_mlem_value
 		mlem_destroy(object);
 		return ((t_mlem_value){0});
 	}
-	mlem_object_resize(&object, object.object_len + 1);
+	mlem_object_resize(&object, object.objectv.len + 1);
 	return (object);
 }

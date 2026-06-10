@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 #include "parser.h"
 
 static bool
@@ -25,20 +26,20 @@ static bool
 	i = 0;
 	if (value.type == MLEM_TYPE_ARRAY)
 	{
-		while (i < value.array_v->array_len && check_container(mlem, token,
-				value.array_v[i], false))
+		while (i < value.arrayv.value->arrayv.len && check_container(mlem, token,
+				value.arrayv.value[i], false))
 			i++;
-		if (i == value.array_v->array_len)
+		if (i == value.arrayv.value->arrayv.len)
 			return (true);
 		set_error_p(mlem, token->true_start, mlem->pos,
 			ERR_INVALID_SUBTEMPLATE_STRUCTURE);
 	}
 	else if (value.type == MLEM_TYPE_OBJECT)
 	{
-		while (i < value.object_len && check_container(mlem, token,
-				value.object_v[i].value, false))
+		while (i < value.objectv.len && check_container(mlem, token,
+				value.objectv.value[i].value, false))
 			i++;
-		if (i == value.object_len)
+		if (i == value.objectv.len)
 			return (true);
 		set_error_p(mlem, token->true_start, mlem->pos,
 			ERR_INVALID_SUBTEMPLATE_STRUCTURE);
@@ -96,8 +97,9 @@ int
 	if (!value.type)
 		return (false);
 	last = template->template_v->subtemplates[template->template_len - 1];
-	if (last.type & TYPEG_CTN_RANGE && !last.array_v
+	if (last.type & TYPEG_CTN_RANGE && !last.arrayv.value
 		&& get_subtemplate_data(last, value))
 		return (-1);
 	return (get_full_container(mlem, template, token, value));
 }
+*/

@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 #include "data.h"
 #include "mlem.h"
-#include "tools.h"
 
 static int
 	early_checks(
@@ -28,9 +28,9 @@ static int
 		{
 			printf("Parent before = %p\n", parent->pointer_v);
 			mlem_append(parent,
-				template.template_v->fallback.reference_v->name,
+				template.template_v->fallback.refv.value->name,
 				template.template_v->fallback);
-			template.template_v->fallback.reference_v->ref_count++;
+			template.template_v->fallback.refv.value->ref_count++;
 			printf("Parent after  = %p\n", parent->pointer_v);
 		}
 		return (true);
@@ -52,7 +52,7 @@ static bool
 	{
 		mlem_destroy(*value);
 		*value = template.template_v->fallback;
-		value->reference_v->ref_count++;
+		value->refv.value->ref_count++;
 	}
 	else
 		return (false);
@@ -117,3 +117,4 @@ bool
 	printf("%X\n", best.weight);
 	return (set_value(value, template, best));
 }
+*/

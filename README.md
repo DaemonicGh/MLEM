@@ -126,7 +126,7 @@ int	main(void) {
 	{
 		// Assuming the mlem file is properly formatted
 		t_mlem_value	cat = mlem_object_get(value, "cat");
-		printf("The cat's name is %s\n", mlem_object_get(cat, "name").string_v);
+		printf("The cat's name is %s\n", mlem_object_get(cat, "name").strv.value);
 	}
 	mlem_destroy(value);
 	mlem_destroy(constants);

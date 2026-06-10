@@ -17,13 +17,13 @@
 static bool
 	check_recursive_references(t_mlem_parser *mlem, t_mlem_value reference)
 {
-	const t_mlem_reference	original = reference.reference_v;
+	const t_mlem_reference	original = reference.refv.value;
 	int						count;
 
 	count = 0;
 	while (reference.type == MLEM_TYPE_REFERENCE)
 	{
-		if (reference.reference_v == original)
+		if (reference.refv.value == original)
 		{
 			set_error_v(mlem, ERR_RECURSIVE_REFERENCE, reference);
 			return (false);
@@ -33,7 +33,7 @@ static bool
 			set_error_v(mlem, ERR_REFERENCE_RECURSION_LIMIT, reference);
 			return (false);
 		}
-		reference = reference.reference_v->value;
+		reference = reference.refv.value->value;
 		count++;
 	}
 	return (true);
@@ -45,15 +45,15 @@ static bool
 	size_t		i;
 
 	i = 0;
-	while (i < mlem->references.array_len)
+	while (i < mlem->references.arrayv.len)
 	{
 		if (!check_recursive_references(mlem,
-				mlem->references.array_v[i].reference_v->value))
+				mlem->references.arrayv.value[i].refv.value->value))
 			return (false);
-		if (!mlem->references.array_v[i].reference_v->value.type)
+		if (!mlem->references.arrayv.value[i].refv.value->value.type)
 		{
 			set_error_v(mlem, ERR_UNDEFINED_REFERENCE,
-				mlem->references.array_v[i].reference_v->value);
+				mlem->references.arrayv.value[i].refv.value->value);
 			return (false);
 		}
 		i++;
@@ -70,7 +70,7 @@ t_mlem_value
 
 	mlem = init_context(filename, NULL, outer_references);
 	if (mlem.error)
-		return ((t_mlem_value){.int_v = mlem.error});
+		return ((t_mlem_value){.intv.value = mlem.error});
 	structure = get_structure(&mlem, &(t_mlem_token){
 			.type = TKN_OPEN,
 			.trigger = &g_mlem_data.tokens[TRG_OPEN_STRUCTURE]},
@@ -82,6 +82,6 @@ t_mlem_value
 	else
 		free(mlem.start);
 	if (mlem.error)
-		return ((t_mlem_value){.int_v = mlem.error});
+		return ((t_mlem_value){.intv.value = mlem.error});
 	return (structure);
 }

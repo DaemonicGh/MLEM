@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 #include "extras.h"
 
 static bool
@@ -18,16 +19,18 @@ static bool
 {
 	size_t		i;
 
-	if (subtemplate.array_len != 1 || subtemplate.type & ~TYPEG_CTN_RANGE_SPE)
+	if (subtemplate.arrayv.len != 1 || subtemplate.type & ~TYPEG_CTN_RANGE_SPE)
 		return (false);
 	i = 0;
-	subtemplate = mlem_dereference(subtemplate.array_v[0]);
-	if (subtemplate.array_len != 2)
+	subtemplate = mlem_dereference(subtemplate.arrayv.value[0]);
+	if (subtemplate.arrayv.len != 2)
 		return (false);
 	while (g_subtemplates[i].type
 		&& !(subtemplate.type == g_subtemplates[i].type
-			&& subtemplate.array_v[0].int_v == g_subtemplates[i].range[0]
-			&& subtemplate.array_v[1].int_v == g_subtemplates[i].range[1]))
+			&& subtemplate.arrayv.value[0].intv.value
+			== g_subtemplates[i].range[0]
+			&& subtemplate.arrayv.value[1].intv.value
+			== g_subtemplates[i].range[1]))
 		i++;
 	if (!g_subtemplates[i].type)
 		return (false);
@@ -73,3 +76,4 @@ void
 	print_value_subtemplate(mlem, subtemplate);
 	fputc('\n', mlem->file);
 }
+*/

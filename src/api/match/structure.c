@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 #include "mlem.h"
 #include "extras.h"
 
@@ -22,19 +23,19 @@ static bool
 	i = 0;
 	if (restrictor.type == MLEM_TYPE_ARRAY)
 	{
-		if ((t_mlem_int)value->array_v->len < restrictor.data.range_i[0]
-			|| (t_mlem_int)value->array_v->len > restrictor.data.range_i[1])
+		if ((t_mlem_int)value->arrayv.value->len < restrictor.data.range_i[0]
+			|| (t_mlem_int)value->arrayv.value->len > restrictor.data.range_i[1])
 			return (false);
-		while (i < value->array_v->len && mlem_match_template(
-				mlem_array_get(value->array_v, i), value, template))
+		while (i < value->arrayv.value->len && mlem_match_template(
+				mlem_array_get(value->arrayv.value, i), value, template))
 			i++;
-		return (i == value->array_v->len);
+		return (i == value->arrayv.value->len);
 	}
 	if (restrictor.type == MLEM_TYPE_OBJECT)
 	{
 		while (i < restrictor.data.array->len
-			&& mlem_match_template(mlem_object_get(value->object_v,
-					value->array_v->content[i].string_v), value, template))
+			&& mlem_match_template(mlem_object_get(value->objectv.value,
+				value->arrayv.value->content[i].strv.value), value, template))
 			i++;
 		return (i == restrictor.data.array->len);
 	}
@@ -66,7 +67,7 @@ static bool
 	if (subtemplate.type == MLEM_TYPE_ARRAY)
 	{
 		while (i < subtemplate.data.array->len && mlem_match_template(
-				mlem_array_get(candidate->value.array_v, i),
+				mlem_array_get(candidate->value.arrayv.value, i),
 				&candidate->value,
 				subtemplate.data.array->content[i].template_v))
 			i++;
@@ -75,7 +76,7 @@ static bool
 	if (subtemplate.type == MLEM_TYPE_OBJECT)
 	{
 		while (i < subtemplate.data.object->len && mlem_match_template(
-				mlem_object_get(candidate->value.object_v,
+				mlem_object_get(candidate->value.objectv.value,
 					subtemplate.data.object->content[i].key),
 				&candidate->value,
 				subtemplate.data.object->content[i].value.template_v))
@@ -93,3 +94,4 @@ bool
 				subtemplate.data.template));
 	return (match_array_object(candidate, subtemplate));
 }
+*/

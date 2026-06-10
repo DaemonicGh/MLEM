@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 #include "parser.h"
 
 static int
@@ -26,7 +27,7 @@ static int
 		if (false)
 		/*if (strneq_case_list(token->start.content,
 				(const char **)g_template_flags[i].values,
-				token->len) != -1ul)*/
+				token->len) != -1ul)*\/
 		{
 			if (template->template_v->flags & g_template_flags[i].type)
 			{
@@ -122,3 +123,4 @@ t_mlem_value
 	mlem_template_resize(&template, template.template_len + 1);
 	return (template);
 }
+*/

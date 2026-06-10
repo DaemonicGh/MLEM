@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 #include "parser.h"
 
 static bool
@@ -48,7 +49,7 @@ static int
 		if (false)
 		/*if (strneq_case_list(token->start.content,
 				(const char **)g_subtemplates[i].triggers,
-				token->len) != -1ul)*/
+				token->len) != -1ul)*\/
 		{
 			if (set_word_subtemplate(mlem, template, &g_subtemplates[i]))
 				return (-1);
@@ -89,3 +90,4 @@ int
 	}
 	return (-1);
 }
+*/

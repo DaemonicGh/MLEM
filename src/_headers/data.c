@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "data.h"
-#include "mlem.h"
 
 const struct s_mlem_data			g_mlem_data = {
 	.tokens = {
@@ -161,18 +160,25 @@ const struct s_mlem_data			g_mlem_data = {
 {TRG_CONTINUE}, {TRG_CONTINUE},									// ~ DEL
 }, .constants = {
 {0}, {
-{.name = "Inf",		.value = {.type = MLEM_TYPE_FLOAT,	.float_v = INFINITY}},
-{.name = "INT_MIN",	.value = {.type = MLEM_TYPE_INT,	.int_v = INT64_MIN}},
-{.name = "INT_MAX",	.value = {.type = MLEM_TYPE_INT,	.int_v = INT64_MAX}}
+{.name = "Inf",		.value = {
+	.floatv = {.type = MLEM_TYPE_FLOAT,	.value = INFINITY}}},
+{.name = "INT_MIN",	.value = {
+	.intv = {.type = MLEM_TYPE_INT, .value = INT64_MIN}}},
+{.name = "INT_MAX",	.value = {.intv = {
+	.type = MLEM_TYPE_INT, .value = INT64_MAX}}}
 }, {
-{.name = "Null",	.value = {.type = MLEM_TYPE_NULL,	.int_v = 0}},
-{.name = "NaN",		.value = {.type = MLEM_TYPE_FLOAT,	.float_v = NAN}}
+{.name = "Null",	.value = {.type = MLEM_TYPE_NULL}},
+{.name = "NaN",		.value = {.floatv = {
+	.type = MLEM_TYPE_FLOAT, .value = NAN}}},
 }, {
-{.name = "False",	.value = {.type = MLEM_TYPE_BOOL,	.bool_v = false}}
+{.name = "False",	.value = {.boolv = {
+	.type = MLEM_TYPE_BOOL,	.value = false}}}
 }, {
-{.name = "True",	.value = {.type = MLEM_TYPE_BOOL,	.bool_v = true}}
+{.name = "True",	.value = {.boolv = {
+	.type = MLEM_TYPE_BOOL,	.value = true}}}
 }, {
-{.name = "-Inf",	.value = {.type = MLEM_TYPE_FLOAT,	.float_v = -INFINITY}}
+{.name = "-Inf",	.value = {.floatv = {
+	.type = MLEM_TYPE_FLOAT,	.value = -INFINITY}}}
 }
 }, /*
 	\0  SOH STX ETX EOT ENQ ACK \a  \b  \t  \n  \v  \f  \r  SO  SI
@@ -236,7 +242,6 @@ const struct s_mlem_data			g_mlem_data = {
 	"", "", "'", "\\?", "\"", "\\?", "\\?", "\\?", "'''",
 	"\\?", "\\?", "\\?", "\\?", "\\?", "\\?", "\\?", "\"\"\""}
 }
-
 };
 
 const t_mlem_template_flag_def		g_template_flags[] = {

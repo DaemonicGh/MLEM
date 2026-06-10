@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include ".mlem_values.h"
 #include "extras.h"
 
 static bool
@@ -26,7 +27,7 @@ static bool
 		fputc('\\', mlem->file);
 		fputc(transform, mlem->file);
 	}
-	else if (value.string_flavor == MLEM_STR_UNQUOTED
+	else if (value.strv.flavor == MLEM_STR_UNQUOTED
 		&& !(get_trigger_str(string)->type
 			& g_mlem_data.tokens[TRG_WORD].whitelist))
 	{
@@ -41,23 +42,22 @@ static bool
 void
 	print_string(t_mlem_serializer *mlem, t_mlem_value string)
 {
-	const char	*flavor = g_mlem_data.repr_data.flavor[string.string_flavor];
+	const char	*flavor = g_mlem_data.repr_data.flavor[string.strv.flavor];
 	size_t		i;
 
 	i = 0;
-	print_tab(mlem);
 	fputs(flavor, mlem->file);
-	if (string.string_flavor & MLEM_STR_UNQUOTED
-		&& get_trigger_str(string.string_v)->type != TKN_WORD)
+	if (string.strv.flavor & MLEM_STR_UNQUOTED
+		&& get_trigger_str(string.strv.value)->type != TKN_WORD)
 		fputc('\\', mlem->file);
-	while (string.string_v[i])
+	while (string.strv.value[i])
 	{
-		if (strctn(string.string_v, flavor))
+		if (strctn(string.strv.value, flavor))
 			fputc('\\', mlem->file);
-		if (string.string_v[i] < 0
-			|| !(string.string_flavor & MLEM_STR_ESCAPE)
-			|| !print_escaped(mlem, string, &string.string_v[i]))
-			fputc(string.string_v[i], mlem->file);
+		if (string.strv.value[i] < 0
+			|| !(string.strv.flavor & MLEM_STR_ESCAPE)
+			|| !print_escaped(mlem, string, &string.strv.value[i]))
+			fputc(string.strv.value[i], mlem->file);
 		i++;
 	}
 	fputs(flavor, mlem->file);
@@ -70,22 +70,10 @@ static void
 
 	print_tab(mlem);
 	fputc('#', mlem->file);
-	value = mlem_string(reference.reference_v->name);
-	value.string_flavor = MLEM_STR_UNQUOTED;
+	value = mlem_string(reference.refv.value->name);
+	value.strv.flavor = MLEM_STR_UNQUOTED;
 	print_string(mlem, value);
-	value = reference.reference_v->value;
-	if (!mlem->from_reference && value.type & TYPEG_REF_PRINTABLE
-		&& (value.type != MLEM_TYPE_STRING
-			|| !(value.string_flavor & MLEM_STR_MULTILINE)))
-	{
-		mlem->from_reference = true;
-		mlem->preceded = true;
-		fwrite(" // ", 4, 1, mlem->file);
-		print_type_value(mlem, value);
-		mlem->from_reference = false;
-	}
-	else
-		fputc('\n', mlem->file);
+	fputc('\n', mlem->file);
 }
 
 static bool
@@ -125,6 +113,7 @@ bool
 		return (true);
 	else if (value.type == MLEM_TYPE_STRING)
 	{
+		print_tab(mlem);
 		print_string(mlem, value);
 		fputc('\n', mlem->file);
 	}
@@ -136,7 +125,7 @@ bool
 	{
 		print_tab(mlem);
 		fwrite("Error: ", 6, 1, mlem->file);
-		fputs(g_error_messages[value.int_v][0], mlem->file);
+		fputs(g_error_messages[value.intv.value][0], mlem->file);
 		fputc('\n', mlem->file);
 	}
 	else

@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 #include "mlem.h"
 #include "extras.h"
 
@@ -19,16 +20,16 @@ bool
 	if (subtemplate.type == MLEM_TYPE_INT)
 	{
 		if (candidate->value.type == MLEM_TYPE_FLOAT
-			&& (t_mlem_int)candidate->value.float_v
-			== candidate->value.float_v)
-			candidate->value.int_v = candidate->value.float_v;
+			&& (t_mlem_int)candidate->value.floatv.value
+			== candidate->value.floatv.value)
+			candidate->value.intv.value = candidate->value.floatv.value;
 		else
 			return (false);
 	}
 	else if (subtemplate.type == MLEM_TYPE_FLOAT)
 	{
 		if (candidate->value.type == MLEM_TYPE_INT)
-			candidate->value.float_v = candidate->value.int_v;
+			candidate->value.floatv.value = candidate->value.intv.value;
 		else
 			return (false);
 	}
@@ -44,9 +45,9 @@ static bool
 	if (subtemplate.type == MLEM_TYPE_BOOL)
 	{
 		if (candidate->value.type == MLEM_TYPE_INT)
-			candidate->value.bool_v = candidate->value.int_v;
+			candidate->value.boolv.value = candidate->value.intv.value;
 		else if (candidate->value.type == MLEM_TYPE_FLOAT)
-			candidate->value.int_v = candidate->value.float_v;
+			candidate->value.intv.value = candidate->value.floatv.value;
 		else
 			return (false);
 	}
@@ -61,16 +62,16 @@ bool
 	if (subtemplate.type == MLEM_TYPE_INT)
 	{
 		if (candidate->value.type == MLEM_TYPE_FLOAT)
-			candidate->value.int_v = candidate->value.float_v;
+			candidate->value.intv.value = candidate->value.floatv.value;
 		else if (candidate->value.type == MLEM_TYPE_BOOL)
-			candidate->value.int_v = candidate->value.bool_v;
+			candidate->value.intv.value = candidate->value.boolv.value;
 		else
 			return (false);
 	}
 	else if (subtemplate.type == MLEM_TYPE_FLOAT)
 	{
 		if (candidate->value.type == MLEM_TYPE_BOOL)
-			candidate->value.float_v = candidate->value.bool_v;
+			candidate->value.floatv.value = candidate->value.boolv.value;
 		else
 			return (false);
 	}
@@ -80,3 +81,4 @@ bool
 	candidate->weight |= CANDF_CONVERTED;
 	return (true);
 }
+*/

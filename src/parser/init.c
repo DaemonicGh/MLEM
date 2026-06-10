@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include ".mlem_values.h"
 #include "data.h"
 #include "parser.h"
 
@@ -33,7 +34,8 @@ static bool
 static bool
 	set_references(t_mlem_parser *mlem)
 {
-	if (mlem->outer_references.type & ~(MLEM_TYPE_ARRAY | MLEM_TYPE_OBJECT))
+	if (!mlem_is_type(mlem->outer_references, 3,
+			MLEM_TYPE_NONE, MLEM_TYPE_ARRAY, MLEM_TYPE_OBJECT))
 	{
 		set_error(mlem, ERR_INVALID_OUTER_REFERENCES);
 		return (false);

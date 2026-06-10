@@ -10,13 +10,37 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdarg.h>
+#include <stdio.h>
+
 #include "mlem.h"
-#include <math.h>
 
 t_mlem_value_type
 	mlem_type(t_mlem_value value)
 {
 	return (mlem_dereference(value).type);
+}
+
+bool
+	mlem_is_type(t_mlem_value value, uint32_t count, ...)
+{
+	va_list		va;
+	uint32_t	i;
+
+	value = mlem_dereference(value);
+	i = 0;
+	va_start(va, count);
+	while (i < count)
+	{
+		if (value.type == va_arg(va, int))
+		{
+			va_end(va);
+			return (true);
+		}
+		i++;
+	}
+	va_end(va);
+	return (false);
 }
 
 bool
@@ -26,7 +50,8 @@ bool
 	value2 = mlem_dereference(value2);
 	if (value1.type != value2.type)
 		return (false);
-	if (value1.type == MLEM_TYPE_FLOAT && value1.float_v == value2.float_v)
+	if (value1.type == MLEM_TYPE_FLOAT
+		&& value1.floatv.value == value2.floatv.value)
 		return (true);
-	return (value1.int_v == value2.int_v);
+	return (value1.intv.value == value2.intv.value);
 }

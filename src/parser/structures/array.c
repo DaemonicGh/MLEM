@@ -69,6 +69,6 @@ t_mlem_value
 		mlem_destroy(array);
 		return ((t_mlem_value){0});
 	}
-	mlem_array_resize(&array, array.array_len + 1);
+	mlem_array_resize(&array, array.arrayv.len + 1);
 	return (array);
 }

@@ -24,18 +24,19 @@ t_mlem_value
 	ret = (t_mlem_value){0};
 	if (references.type == MLEM_TYPE_ARRAY)
 	{
-		while (i < references.array_len && !ret.type)
-			ret = get_deep_reference(references.array_v[i++], token);
+		while (i < references.arrayv.len && !ret.type)
+			ret = get_deep_reference(references.arrayv.value[i++], token);
 	}
 	else if (references.type == MLEM_TYPE_OBJECT)
 	{
-		while (i < references.object_len && !ret.type)
+		while (i < references.objectv.len && !ret.type)
 		{
-			if (references.object_v[i].value.type == MLEM_TYPE_REFERENCE
-				&& references.object_v[i].value.reference_owner
-				&& str_eq_tkn_case(references.object_v[i].key, token))
-				return (references.object_v[i].value);
-			ret = get_deep_reference(references.object_v[i++].value, token);
+			if (references.objectv.value[i].value.type == MLEM_TYPE_REFERENCE
+				&& references.objectv.value[i].value.refv.is_owner
+				&& str_eq_tkn_case(references.objectv.value[i].key, token))
+				return (references.objectv.value[i].value);
+			ret = get_deep_reference(
+					references.objectv.value[i++].value, token);
 		}
 	}
 	return (ret);
@@ -47,11 +48,11 @@ t_mlem_value
 	size_t			i;
 
 	i = 0;
-	while (i < references.array_len)
+	while (i < references.arrayv.len)
 	{
 		if (str_eq_tkn_case(
-				references.array_v[i].reference_v->name, token))
-			return (references.array_v[i]);
+				references.arrayv.value[i].refv.value->name, token))
+			return (references.arrayv.value[i]);
 		i++;
 	}
 	return ((t_mlem_value){0});
@@ -66,7 +67,7 @@ bool
 	value = get_string_value(mlem, token, key);
 	if (!value.type)
 		return (false);
-	*reference = mlem_reference(value.string_v, (t_mlem_value){0});
+	*reference = mlem_reference_create(value.strv.value, (t_mlem_value){0});
 	if (!reference->type
 		|| !mlem_array_append(&mlem->references, *reference))
 	{
@@ -88,7 +89,7 @@ t_mlem_value
 		reference = get_reference(mlem->references, token);
 	if (!reference.type && !create_reference(mlem, token, key, &reference))
 		return ((t_mlem_value){0});
-	reference.reference_owner = false;
-	reference.reference_v->ref_count++;
+	reference.refv.is_owner = false;
+	reference.refv.value->ref_count++;
 	return (reference);
 }

@@ -22,7 +22,7 @@ static t_mlem_pair
 	pair.value = get_string_value(mlem, key, NULL);
 	if (!pair.value.type)
 		return ((t_mlem_pair){0});
-	pair.key = pair.value.string_v;
+	pair.key = pair.value.strv.value;
 	if (mlem_object_get(*object, pair.key))
 	{
 		set_error_t(mlem, key, ERR_DUPLICATED_KEY);
@@ -62,17 +62,17 @@ static t_mlem_value
 {
 	if (reference.type)
 	{
-		free(reference.reference_v->name);
-		reference.reference_v->name = key;
-		reference.reference_v->value = value;
-		reference.reference_v->ref_count++;
-		reference.reference_owner = true;
+		free(reference.refv.value->name);
+		reference.refv.value->name = key;
+		reference.refv.value->value = value;
+		reference.refv.value->ref_count++;
+		reference.refv.is_owner = true;
 		return (reference);
 	}
-	value = mlem_reference(key, value);
+	value = mlem_reference_create(key, value);
 	if (!value.type || !mlem_array_append(&mlem->references, value))
 		return ((t_mlem_value){0});
-	value.reference_v->ref_count++;
+	value.refv.value->ref_count++;
 	return (value);
 }
 
@@ -85,7 +85,7 @@ bool
 	t_mlem_pair		pair;
 
 	reference = get_reference(mlem->references, key);
-	if (reference.type && reference.reference_v->value.type)
+	if (reference.type && reference.refv.value->value.type)
 	{
 		set_error_t(mlem, key, ERR_REDEFINING_REFERENCE);
 		return (false);

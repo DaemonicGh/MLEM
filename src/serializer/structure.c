@@ -18,20 +18,18 @@ static void
 {
 	t_mlem_value	string;
 
+	print_tab(mlem);
+	string = mlem_raw_value(MLEM_TYPE_STRING, (uint64_t)key);
 	if (reference)
 	{
-		print_tab(mlem);
 		fputc('#', mlem->file);
-		string = mlem_string(key);
-		string.string_flavor = MLEM_STR_UNQUOTED;
-		print_string(mlem, string);
+		string.strv.flavor = MLEM_STR_UNQUOTED;
 	}
 	else
 	{
-		string = mlem_string(key);
-		string.string_flavor = MLEM_STR_DQUOTED;
-		print_string(mlem, string);
+		string.strv.flavor = MLEM_STR_DQUOTED;
 	}
+	print_string(mlem, string);
 	fwrite(" = ", 1, 3, mlem->file);
 }
 
@@ -42,20 +40,21 @@ void
 
 	mlem->depth++;
 	i = 0;
-	while (i < object.object_len)
+	while (i < object.objectv.len)
 	{
-		if (object.object_v[i].value.type == MLEM_TYPE_REFERENCE
-			&& object.object_v[i].value.reference_owner)
+		if (object.objectv.value[i].value.type == MLEM_TYPE_REFERENCE
+			&& object.objectv.value[i].value.refv.is_owner)
 		{
-			print_key(mlem, object.object_v[i].key, true);
+			print_key(mlem, object.objectv.value[i].key, true);
 			mlem->preceded = true;
-			print_value(mlem, object.object_v[i++].value.reference_v->value);
+			print_value(mlem,
+				object.objectv.value[i++].value.refv.value->value);
 		}
 		else
 		{
-			print_key(mlem, object.object_v[i].key, false);
+			print_key(mlem, object.objectv.value[i].key, false);
 			mlem->preceded = true;
-			print_value(mlem, object.object_v[i++].value);
+			print_value(mlem, object.objectv.value[i++].value);
 		}
 	}
 	mlem->depth--;
@@ -68,11 +67,11 @@ void
 
 	mlem->depth++;
 	i = 0;
-	while (i < array.array_len)
-		print_value(mlem, array.array_v[i++]);
+	while (i < array.arrayv.len)
+		print_value(mlem, array.arrayv.value[i++]);
 	mlem->depth--;
 }
-
+/*
 static void
 	print_template_structure(
 		t_mlem_serializer *mlem, t_mlem_template_struct structure)
@@ -136,7 +135,8 @@ void
 		print_tab(mlem);
 		fwrite("= ", 1, 2, mlem->file);
 		mlem->preceded = true;
-		print_value(mlem, template.template_v->fallback.reference_v->value);
+		print_value(mlem, template.template_v->fallback.refv.value->value);
 	}
 	fwrite(">\n", 1, 2, mlem->file);
 }
+*/

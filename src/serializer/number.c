@@ -17,32 +17,33 @@ static void
 {
 	t_mlem_value	send;
 
-	if (value.int_v >= value.int_base)
+	if (value.intv.value >= value.intv.base)
 	{
 		send = value;
-		send.int_v /= value.int_base;
+		send.intv.value /= value.intv.base;
 		print_base_int(file, send);
 	}
-	fputc(g_mlem_data.repr_data.number[value.int_v % value.int_base], file);
+	fputc(g_mlem_data.repr_data.number[
+		value.intv.value % value.intv.base], file);
 }
 
 void
 	print_int(t_mlem_serializer *mlem, t_mlem_value value)
 {
-	const char		base_char = g_mlem_data.repr_data.base[value.int_base];
+	const char		base_char = g_mlem_data.repr_data.base[value.intv.base];
 	t_mlem_value	absolute;
 
 	print_tab(mlem);
 	if (base_char == ' ')
 	{
-		fprintf(mlem->file, "%zi\n", value.int_v);
+		fprintf(mlem->file, "%zi\n", value.intv.value);
 		return ;
 	}
 	absolute = value;
-	if (value.int_v < 0)
+	if (value.intv.value < 0)
 	{
 		fputc('-', mlem->file);
-		absolute.int_v = -absolute.int_v;
+		absolute.intv.value = -absolute.intv.value;
 	}
 	fprintf(mlem->file, "0%c", base_char);
 	print_base_int(mlem->file, absolute);
@@ -55,14 +56,14 @@ static void
 	int		i;
 
 	i = 0;
-	while (i < value->float_exponent)
+	while (i < value->floatv.exponent)
 	{
-		value->float_v /= 10;
+		value->floatv.value /= 10;
 		i++;
 	}
-	while (i > value->float_exponent)
+	while (i > value->floatv.exponent)
 	{
-		value->float_v *= 10;
+		value->floatv.value *= 10;
 		i--;
 	}
 }
@@ -77,20 +78,20 @@ static void
 
 	zeros = 0;
 	digits = 0;
-	while (value.float_v && ++zeros < 4 && ++digits < 12)
+	while (value.floatv.value && ++zeros < 4 && ++digits < 12)
 	{
-		value.float_v *= 10;
-		dec = value.float_v;
+		value.floatv.value *= 10;
+		dec = value.floatv.value;
 		if (!dec)
 			continue ;
-		udec = value.float_v + 0.001;
+		udec = value.floatv.value + 0.001;
 		if (udec != dec && udec < 10)
 		{
 			fprintf(mlem->file, "%0*i", zeros, udec);
 			return ;
 		}
 		fprintf(mlem->file, "%0*i", zeros, dec);
-		value.float_v -= dec;
+		value.floatv.value -= dec;
 		zeros = 0;
 	}
 }
@@ -100,15 +101,15 @@ void
 {
 	fix_float_exponent(&value);
 	print_tab(mlem);
-	if ((long)value.float_v || value.float_v == 0)
-		fprintf(mlem->file, "%zi", (long)value.float_v);
-	if (value.float_v < 0)
-		value.float_v = -value.float_v;
-	value.float_v = fmod(value.float_v, 1);
-	if (value.float_v || value.float_exponent == 0)
+	if ((long)value.floatv.value || value.floatv.value == 0)
+		fprintf(mlem->file, "%zi", (long)value.floatv.value);
+	if (value.floatv.value < 0)
+		value.floatv.value = -value.floatv.value;
+	value.floatv.value = fmod(value.floatv.value, 1);
+	if (value.floatv.value || value.floatv.exponent == 0)
 		fputc('.', mlem->file);
 	print_float_decimal(mlem, value);
-	if (value.float_exponent)
-		fprintf(mlem->file, "e%i", value.float_exponent);
+	if (value.floatv.exponent)
+		fprintf(mlem->file, "e%i", value.floatv.exponent);
 	fputc('\n', mlem->file);
 }

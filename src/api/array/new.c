@@ -21,11 +21,11 @@ t_mlem_value
 	t_mlem_value	array;
 
 	array.type = MLEM_TYPE_ARRAY;
-	array.array_v = malloc(sizeof(t_mlem_value) * capacity);
-	if (!array.array_v)
+	array.arrayv.value = malloc(sizeof(t_mlem_value) * capacity);
+	if (!array.arrayv.value)
 		return ((t_mlem_value){0});
-	array.array_len = 0;
-	array.array_extra_capacity = capacity;
+	array.arrayv.len = 0;
+	array.arrayv.extra_capacity = capacity;
 	return (array);
 }
 
@@ -42,7 +42,8 @@ t_mlem_value
 	i = 0;
 	va_start(va, len);
 	while (i < len)
-		array.array_v[i++] = va_arg(va, t_mlem_value);
+		array.arrayv.value[i++] = va_arg(va, t_mlem_value);
 	va_end(va);
+	array.arrayv.len = len;
 	return (array);
 }

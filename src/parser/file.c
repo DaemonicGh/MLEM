@@ -24,8 +24,8 @@ static bool	file_error(t_mlem_parser *mlem, FILE *file)
 		mlem->start = NULL;
 		return (true);
 	}
-	set_error_v(mlem, ERR_FILE, (t_mlem_value){
-		.type = MLEM_TYPE_STRING, .string_v = strerror(errno)});
+	set_error_v(mlem, ERR_FILE, (t_mlem_value){.strv = {
+		.type = MLEM_TYPE_STRING, .value = strerror(errno)}});
 	if (file)
 		fclose(file);
 	return (false);

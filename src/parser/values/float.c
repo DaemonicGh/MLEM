@@ -25,9 +25,9 @@ static t_mlem_error
 	{
 		if (mlem_isdigit(token->start.content[*i]))
 		{
-			value->float_v = value->float_v * 10
-				+ (token->start.content[*i] - '0') * value->float_exponent;
-			if (value->float_v != (long)value->float_v)
+			value->floatv.value = value->floatv.value * 10
+				+ (token->start.content[*i] - '0') * value->floatv.exponent;
+			if (value->floatv.value != (long)value->floatv.value)
 			{
 				set_error_t(mlem, token, ERR_NUMBER_OUT_OF_RANGE);
 				break ;
@@ -48,13 +48,13 @@ static bool
 	bool			valid;
 
 	(*i)++;
-	dec = value->float_exponent * 0.1;
+	dec = value->floatv.exponent * 0.1;
 	valid = false;
 	while (*i < token->len)
 	{
 		if (mlem_isdigit(token->start.content[*i]))
 		{
-			value->float_v += (token->start.content[*i] - '0') * dec;
+			value->floatv.value += (token->start.content[*i] - '0') * dec;
 			dec /= 10;
 			valid = true;
 		}
@@ -71,11 +71,11 @@ static bool
 {
 	t_mlem_int	exp;
 
-	exp = value->float_exponent;
+	exp = value->floatv.exponent;
 	while (exp > 0)
 	{
-		value->float_v *= 10;
-		if (value->float_v == INFINITY || value->float_v == INFINITY)
+		value->floatv.value *= 10;
+		if (value->floatv.value == INFINITY || value->floatv.value == INFINITY)
 		{
 			set_error_t(mlem, token, ERR_NUMBER_TO_INFINITY);
 			return (false);
@@ -84,7 +84,7 @@ static bool
 	}
 	while (exp < 0)
 	{
-		value->float_v /= 10;
+		value->floatv.value /= 10;
 		exp++;
 	}
 	return (true);
@@ -104,8 +104,8 @@ static bool
 	{
 		if (mlem_isdigit(token->start.content[*i]))
 		{
-			value->float_exponent *= 10;
-			value->float_exponent += token->start.content[*i] - '0';
+			value->floatv.exponent *= 10;
+			value->floatv.exponent += token->start.content[*i] - '0';
 			valid = true;
 		}
 		else if (token->start.content[*i] != '_')
@@ -114,7 +114,7 @@ static bool
 	}
 	if (valid)
 	{
-		value->float_exponent *= sign;
+		value->floatv.exponent *= sign;
 		return (apply_float_exponent(mlem, token, value));
 	}
 	set_error_t(mlem, token, ERR_EMPTY_EXPONENT);
@@ -128,9 +128,9 @@ t_mlem_value
 	size_t			i;
 	bool			valid;
 
-	value = (t_mlem_value){.type = MLEM_TYPE_FLOAT};
+	value = (t_mlem_value){.floatv = {.type = MLEM_TYPE_FLOAT}};
 	i = 0;
-	value.float_exponent = get_sign(token, &i);
+	value.floatv.exponent = get_sign(token, &i);
 	valid = handle_integer(mlem, token, &i, &value);
 	if (mlem->error)
 		return ((t_mlem_value){0});
@@ -140,7 +140,7 @@ t_mlem_value
 		set_error_t(mlem, token, ERR_EMPTY_NUMBER);
 		return ((t_mlem_value){0});
 	}
-	value.float_exponent = 0;
+	value.floatv.exponent = 0;
 	if (mlem_toupper(token->start.content[i]) == 'E'
 		&& !handle_float_exponent(mlem, token, &i, &value))
 		return ((t_mlem_value){0});

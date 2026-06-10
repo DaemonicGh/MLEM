@@ -58,8 +58,6 @@ t_mlem_value
 		structure = get_array(mlem, token, key);
 	else if (structure.type == MLEM_TYPE_OBJECT)
 		structure = get_object(mlem, token, key);
-	else if (structure.type == MLEM_TYPE_TEMPLATE)
-		structure = get_template(mlem, token, key);
 	else
 		structure = (t_mlem_value){0};
 	mlem->depth--;

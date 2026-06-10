@@ -20,7 +20,7 @@ static bool
 {
 	if (!(valid & 1))
 	{
-		if (value->int_base == 10)
+		if (value->intv.base == 10)
 			set_error_t(mlem, token, ERR_INVALID_NUMBER);
 		else
 			set_error_t(mlem, token, ERR_INVALID_BASE_NUMBER);
@@ -31,15 +31,15 @@ static bool
 		set_error_t(mlem, token, ERR_EMPTY_NUMBER);
 		return (false);
 	}
-	if (value->__dummy_32)
+	if (value->_datav.data32)
 	{
-		value->__dummy_32 = 0;
-		if (value->int_v == LONG_MIN)
+		value->_datav.data32 = 0;
+		if (value->intv.value == LONG_MIN)
 		{
 			set_error_t(mlem, token, ERR_NUMBER_OUT_OF_RANGE);
 			return (false);
 		}
-		value->int_v = -value->int_v;
+		value->intv.value = -value->intv.value;
 	}
 	return (true);
 }
@@ -55,10 +55,10 @@ bool
 	while (i < token->len)
 	{
 		nval = g_mlem_data.char_data.number[(int)token->start.content[i]];
-		if (nval >= 0 && nval < value->int_base)
+		if (nval >= 0 && nval < value->intv.base)
 		{
-			value->int_v = value->int_v * value->int_base - nval;
-			if (value->int_v > 0)
+			value->intv.value = value->intv.value * value->intv.base - nval;
+			if (value->intv.value > 0)
 			{
 				set_error_t(mlem, token, ERR_NUMBER_OUT_OF_RANGE);
 				return (false);
@@ -79,11 +79,11 @@ t_mlem_value
 	t_mlem_value	value;
 	size_t			i;
 
-	value = (t_mlem_value){.type = MLEM_TYPE_INT};
+	value = (t_mlem_value){.intv = {.type = MLEM_TYPE_INT}};
 	i = 0;
-	value.__dummy_32 = (get_sign(token, &i) > 0);
-	value.int_base = get_base(token, &i);
-	if (value.int_base == -1)
+	value._datav.data32 = (get_sign(token, &i) > 0);
+	value.intv.base = get_base(token, &i);
+	if (value.intv.base == -1)
 	{
 		set_error_t(mlem, token, ERR_INVALID_BASE_PREFIX);
 		return ((t_mlem_value){0});

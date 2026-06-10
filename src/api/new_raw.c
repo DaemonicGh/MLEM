@@ -1,38 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get.c                                              :+:      :+:    :+:   */
+/*   new_raw.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rprieur <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/09 21:44:40 by rprieur           #+#    #+#             */
-/*   Updated: 2026/05/04 18:19:58 by rprieur          ###   ########.fr       */
+/*   Created: 2026/06/04 14:26:06 by rprieur           #+#    #+#             */
+/*   Updated: 2026/06/04 14:26:06 by rprieur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mlem.h"
 
 t_mlem_value
-	*mlem_array_get(t_mlem_value array, uint32_t index)
+	mlem_raw_value(t_mlem_value_type type, uint64_t value)
 {
-	array = mlem_dereference(array);
-	if (index >= array.arrayv.len)
-		return (NULL);
-	return (&array.arrayv.value[index]);
+	return ((t_mlem_value){
+		._datav = {
+			.type = type,
+			.value = value
+		}
+	});
 }
 
-int64_t
-	mlem_array_index(t_mlem_value array, t_mlem_value value)
+t_mlem_value
+	mlem_raw_value_ex(t_mlem_value_type type,
+		uint64_t value, uint32_t data_32, uint16_t data_16)
 {
-	int64_t	i;
-
-	i = 0;
-	array = mlem_dereference(array);
-	while (i < array.arrayv.len)
-	{
-		if (mlem_equal(array.arrayv.value[i], value))
-			return (i);
-		i++;
-	}
-	return (-1);
+	return ((t_mlem_value){
+		._datav = {
+			.type = type,
+			.data32 = data_32,
+			.data16 = data_16,
+			.value = value
+		}
+	});
 }

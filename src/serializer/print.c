@@ -31,8 +31,6 @@ void
 		print_tab(mlem);
 		fwrite("]\n", 1, 2, mlem->file);
 	}
-	else if (value.type == MLEM_TYPE_TEMPLATE)
-		print_template(mlem, value);
 	else if (!print_type_value(mlem, value))
 	{
 		print_tab(mlem);

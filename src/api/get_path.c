@@ -20,16 +20,18 @@ t_mlem_value
 
 	i = 0;
 	current = &value;
-	if (path.array_len == 0 || !current)
+	if (path.arrayv.len == 0 || !current)
 		return (NULL);
-	while (i < path.array_len && current)
+	while (i < path.arrayv.len && current)
 	{
-		if (path.array_v[i].type == MLEM_TYPE_INT
+		if (path.arrayv.value[i].type == MLEM_TYPE_INT
 			&& current->type == MLEM_TYPE_ARRAY)
-			current = mlem_array_get(*current, path.array_v[i].int_v);
-		else if (path.array_v[i].type == MLEM_TYPE_STRING
+			current = mlem_array_get(
+					*current, path.arrayv.value[i].intv.value);
+		else if (path.arrayv.value[i].type == MLEM_TYPE_STRING
 			&& current->type == MLEM_TYPE_OBJECT)
-			current = mlem_object_get(*current, path.array_v[i].string_v);
+			current = mlem_object_get(
+					*current, path.arrayv.value[i].strv.value);
 		else
 			return (NULL);
 		i++;
