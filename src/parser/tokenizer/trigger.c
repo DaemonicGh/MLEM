@@ -36,7 +36,7 @@ t_mlem_token_trigger
 	size_t					i;
 
 	if (*str < 0)
-		return (&g_mlem_data.tokens[TRG_CONTINUE]);
+		return (&g_mlem_data.tokens[TRG_UNEXPECTED]);
 	triggers = g_mlem_data.char_data.tokens[(int)*str];
 	i = 0;
 	trigger = &g_mlem_data.tokens[triggers[i++]];

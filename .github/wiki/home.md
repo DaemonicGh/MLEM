@@ -12,7 +12,7 @@ If you're looking for informations on syntax and how to write MLEM data, start
 ## Value handling
 
 For a quick overview of MLEM's types and API, check out the
-[header](../../include/mlem.h)
+[header](https://github.com/DaemonicGh/MLEM/blob/main/include/mlem.h)
 
 If you're looking for more informations on the structs and types used by MLEM, look
 [here](values.md)

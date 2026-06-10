@@ -87,6 +87,12 @@ t_mlem_value
 mlem_string(t_mlem_string value);
 
 /**
+ * Creates and returns a MLEM string value with the given attributes.
+ */
+t_mlem_value
+mlem_string_ex(t_mlem_string value, uint32_t len, uint8_t flavor);
+
+/**
  * Creates and returns a MLEM null value.
  *
  * Do not confuse a null value with
@@ -116,6 +122,28 @@ mlem_array_empty(uint32_t capacity);
  */
 t_mlem_value
 mlem_array(uint32_t len, ...);
+
+/**
+ * Returns a new empty packed array
+ * for the given type with the given capacity.
+ *
+ * The array allocation can fail, then
+ * the returned value will be zero padded.
+ * The array must be freed using mlem_destroy().
+ */
+t_mlem_value
+mlem_packed_array_empty(t_mlem_value_type type, uint32_t capacity);
+
+/**
+ * Returns a new packed array for the given type with the given values.
+ *
+ * The array allocation can fail, then
+ * the returned value will be zero padded.
+ * Values must be of the specified type.
+ * The array must be freed using mlem_destroy().
+ */
+t_mlem_value
+mlem_packed_array(t_mlem_value_type type, uint32_t len, ...);
 
 /**
  * Returns an empty object with the given capacity.
@@ -227,7 +255,7 @@ t_mlem_value_type
 mlem_type(t_mlem_value value);
 
 /**
- * Returns true if the given value's type matches one of the given type
+ * Returns true if the given value's type matches one of the given type.
  *
  * @count	The amount of type to check for.
  */
@@ -235,7 +263,7 @@ bool
 mlem_is_type(t_mlem_value value, uint32_t count, ...);
 
 /**
- * Returns true if the two values or their references are equal.
+ * Returns true if the two values are equal.
  *
  * Two values are considered equal if they have the same type and value.
  * Pointers are compared by their memory address.
@@ -351,7 +379,7 @@ mlem_array_append(t_mlem_value *array, t_mlem_value value);
 /**
  * Returns the value at the given index in the given array.
  *
- * The value must be of type t_mlem_value.
+ * Returns NULL if the index is out of bounds
  */
 t_mlem_value
 *mlem_array_get(t_mlem_value array, uint32_t index);
@@ -363,6 +391,53 @@ t_mlem_value
  */
 int64_t
 mlem_array_index(t_mlem_value array, t_mlem_value value);
+
+// PACKED ARRAYS
+
+/**
+ * Resizes the given packed array to the given capacity.
+ *
+ * Returns true if the array was resized successfully, false otherwise.
+ */
+bool
+mlem_packed_array_resize(t_mlem_value *array, uint32_t new_capacity);
+
+/**
+ * Appends the given value to the given packed array.
+ *
+ * Returns true if the given value has the proper type
+ * and the value was appended successfully, returns false otherwise.
+ */
+bool
+mlem_packed_array_append(t_mlem_value *array, t_mlem_value value);
+
+/**
+ * Returns the value at the given index in the given packed array.
+ *
+ * The value is returned inside a mlem value specifying its type.
+ * The returned value will be zero padded if the index is out of bounds
+ */
+t_mlem_value
+mlem_packed_array_get(t_mlem_value array, uint32_t index);
+
+/**
+ * Returns the index of the given value in the given packed array.
+ *
+ * Returns -1 if the value is not found.
+ */
+int64_t
+mlem_packed_array_index(t_mlem_value array, t_mlem_value value);
+
+/**
+ * Sets the value at the given index in the given packed array
+ * to the value stored in the given mlem value.
+ *
+ * Returns false if the index is out of bounds
+ * or if the value has the wrong type.
+ */
+bool
+mlem_packed_array_set(
+	t_mlem_value array, uint32_t index, t_mlem_value value);
 
 // OBJECTS
 

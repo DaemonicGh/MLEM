@@ -10,32 +10,33 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include ".mlem_values.h"
 #include "extras.h"
 
 void
 	print_value(t_mlem_serializer *mlem, t_mlem_value value)
 {
-	if (value.type == MLEM_TYPE_OBJECT)
-	{
-		print_tab(mlem);
-		fwrite("[\n", 1, 2, mlem->file);
-		print_object(mlem, value);
-		print_tab(mlem);
-		fwrite("]\n", 1, 2, mlem->file);
-	}
-	else if (value.type == MLEM_TYPE_ARRAY)
-	{
-		print_tab(mlem);
-		fwrite("[\n", 1, 2, mlem->file);
-		print_array(mlem, value);
-		print_tab(mlem);
-		fwrite("]\n", 1, 2, mlem->file);
-	}
-	else if (!print_type_value(mlem, value))
-	{
-		print_tab(mlem);
-		fwrite("???\n", 1, 4, mlem->file);
-	}
+	const t_mlem_value_type	keys[3] = {
+		MLEM_TYPE_OBJECT, MLEM_TYPE_ARRAY, MLEM_TYPE_PACKED_ARRAY};
+	const char				bounds[4][2][6] = {
+	{"[\n", "]\n"}, {"[\n", "]\n"}, {"[*\n", "]\n"}, {"???\n"}};
+	const void				*funcs[3] = {
+		print_object, print_array, print_packed_array};
+	size_t					i;
+
+	if (print_type_value(mlem, value))
+		return ;
+	i = 0;
+	while (i < 3 && value.type != keys[i])
+		i++;
+	print_tab(mlem);
+	fputs(bounds[i][0], mlem->file);
+	if (i == 3)
+		return ;
+	((void (*)(t_mlem_serializer *, t_mlem_value))
+		(funcs[i]))(mlem, value);
+	print_tab(mlem);
+	fputs(bounds[i][1], mlem->file);
 }
 
 void

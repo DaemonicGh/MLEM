@@ -17,8 +17,8 @@ NAMES					:=	libmlem.a libmlem.so
 
 parser_files			:=	\
 	file init parse 															\
-	structures/structure structures/array structures/object						\
-	structures/object_append													\
+	structures/structure structures/array structures/packed_array				\
+	structures/object structures/object_append									\
 	values/float values/get_value values/int									\
 	values/reference values/string values/word									\
 	tokenizer/get_token tokenizer/next_token tokenizer/trigger					\
@@ -28,9 +28,10 @@ serializer_files		:=	\
 	print number structure utils value								\
 
 api_files				:=	\
-	as_value convert copy destroy get_path										\
+	as_value convert copy destroy destroy_structure get_path										\
 	new new_raw reference structure value										\
 	array/append array/get array/new											\
+	packed_array/append packed_array/get packed_array/new packed_array/value	\
 	object/append object/get object/new											\
 
 common_files			:=	\

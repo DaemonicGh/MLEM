@@ -18,7 +18,7 @@ bool
 {
 	if (token->type & TKN_EOF)
 		return (true);
-	if (trigger->trigger == &g_mlem_data.tokens[token->trigger->data])
+	if (trigger->trigger->data & token->trigger->data)
 		return (true);
 	set_error_t(mlem, token, ERR_WRONG_STRUCTURE_CLOSE);
 	return (false);

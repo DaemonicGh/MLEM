@@ -35,14 +35,16 @@ static t_mlem_value_type
 static t_mlem_value_type
 	get_structure_type(t_mlem_parser *mlem, t_mlem_token *trigger_token)
 {
-	if (trigger_token->trigger->data == TRG_OPEN_ARRAY)
-		return (MLEM_TYPE_ARRAY);
-	if (trigger_token->trigger->data == TRG_OPEN_OBJECT)
-		return (MLEM_TYPE_OBJECT);
-	if (trigger_token->trigger->data == TRG_OPEN_TEMPLATE)
-		return (MLEM_TYPE_TEMPLATE);
-	if (trigger_token->trigger->data == TRG_OPEN_STRUCTURE)
+	if (trigger_token->trigger->data == TRGDATA_STRUCTURE)
 		return (get_unknown_structure_type(mlem));
+	if (trigger_token->trigger->data == TRGDATA_ARRAY)
+		return (MLEM_TYPE_ARRAY);
+	if (trigger_token->trigger->data == TRGDATA_OBJECT)
+		return (MLEM_TYPE_OBJECT);
+	if (trigger_token->trigger->data == TRGDATA_PACKED_ARRAY)
+		return (MLEM_TYPE_PACKED_ARRAY);
+	if (trigger_token->trigger->data == TRGDATA_TEMPLATE)
+		return (MLEM_TYPE_TEMPLATE);
 	set_error_t(mlem, trigger_token, ERR_UNEXPECTED_TOKEN);
 	return (MLEM_TYPE_NONE);
 }
@@ -58,6 +60,8 @@ t_mlem_value
 		structure = get_array(mlem, token, key);
 	else if (structure.type == MLEM_TYPE_OBJECT)
 		structure = get_object(mlem, token, key);
+	else if (structure.type == MLEM_TYPE_PACKED_ARRAY)
+		structure = get_packed_array(mlem, token, key);
 	else
 		structure = (t_mlem_value){0};
 	mlem->depth--;

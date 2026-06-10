@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -59,8 +60,9 @@ typedef enum e_mlem_value_type: uint8_t
 	MLEM_TYPE_STRING		= 0b00010001,
 	MLEM_TYPE_REFERENCE		= 0b00010010,
 	MLEM_TYPE_ARRAY			= 0b00100001,
-	MLEM_TYPE_OBJECT		= 0b00100010,
-	MLEM_TYPE_TEMPLATE		= 0b00100011,
+	MLEM_TYPE_PACKED_ARRAY	= 0b00100010,
+	MLEM_TYPE_OBJECT		= 0b00100011,
+	MLEM_TYPE_TEMPLATE		= 0b00110001,
 	MLEM_TYPE_USER_POINTER	= 0b01010001,
 }	t_mlem_value_type;
 
@@ -211,9 +213,36 @@ typedef struct s_mlem_user_pointer_value
 }	t_mlem_user_pointer_value;
 
 /**
+ * MLEM packed array value.
+ *
+ * @element_type	the type of all the values in the array.
+ * @len				the length of the array.
+ * @extra_capacity	the unused elements in the allocation.
+ *
+ * Due to value header requirements, this array
+ * cannot store structures and cannot own references.
+ */
+typedef struct s_mlem_packed_array_value
+{
+	t_mlem_value_type	type;
+	t_mlem_value_type	element_type;
+	uint16_t			extra_capacity;
+	uint32_t			len;
+	union
+	{
+		t_mlem_int			*value_int;
+		t_mlem_float		*value_float;
+		t_mlem_bool			*value_bool;
+		t_mlem_string		*value_str;
+		t_mlem_reference	*value_ref;
+		void				**value_ptr;
+	};
+}	t_mlem_packed_array_value;
+
+/**
  * Represents a value in the MLEM format.
  *
- * @type		indicates the value's type,
+ * @type		shortcut to the value's type,
  * @[type]v		contains the actual value.
  */
 typedef union u_mlem_value
@@ -225,6 +254,7 @@ typedef union u_mlem_value
 	t_mlem_string_value			strv;
 	t_mlem_reference_value		refv;
 	t_mlem_array_value			arrayv;
+	t_mlem_packed_array_value	packedv;
 	t_mlem_object_value			objectv;
 	t_mlem_template_value		templatev;
 	t_mlem_user_pointer_value	ptrv;
@@ -291,3 +321,16 @@ typedef struct s_mlem_template
 	t_mlem_value			fallback;
 	t_mlem_subtemplate		subtemplates[];
 }	*t_mlem_template;
+
+// TYPE ASSERTIONS
+
+static_assert(sizeof(t_mlem_int) == 8,
+	"Invalid MLEM integer size, expected 8 byte value");
+static_assert(sizeof(t_mlem_float) == 8,
+	"Invalid MLEM float size, expected 8 byte value");
+static_assert(sizeof(t_mlem_bool) == 1,
+	"Invalid MLEM boolean size, expected 1 byte value");
+static_assert(sizeof(void *) == 8,
+	"Invalid MLEM pointer size, expected 8 byte value");
+static_assert(sizeof(t_mlem_value) == 16,
+	"Invalid MLEM value size, expected 16 byte value");

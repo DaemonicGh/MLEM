@@ -19,16 +19,13 @@ static void
 	t_mlem_value	string;
 
 	print_tab(mlem);
-	string = mlem_raw_value(MLEM_TYPE_STRING, (uint64_t)key);
 	if (reference)
 	{
 		fputc('#', mlem->file);
-		string.strv.flavor = MLEM_STR_UNQUOTED;
+		string = mlem_string_ex(key, 0, MLEM_STR_UNQUOTED);
 	}
 	else
-	{
-		string.strv.flavor = MLEM_STR_DQUOTED;
-	}
+		string = mlem_string(key);
 	print_string(mlem, string);
 	fwrite(" = ", 1, 3, mlem->file);
 }
@@ -69,6 +66,32 @@ void
 	i = 0;
 	while (i < array.arrayv.len)
 		print_value(mlem, array.arrayv.value[i++]);
+	mlem->depth--;
+}
+
+void
+	print_packed_array(t_mlem_serializer *mlem, t_mlem_value array)
+{
+	size_t		i;
+
+	mlem->depth++;
+	i = 0;
+	if (array.packedv.element_type == MLEM_TYPE_STRING)
+		while (i < array.packedv.len)
+			print_type_value(mlem,
+				mlem_string(array.packedv.value_str[i++]));
+	else if (array.packedv.element_type == MLEM_TYPE_FLOAT)
+		while (i < array.packedv.len)
+			print_type_value(mlem,
+				mlem_float(array.packedv.value_float[i++]));
+	else if (array.packedv.element_type == MLEM_TYPE_BOOL)
+		while (i < array.packedv.len)
+			print_type_value(mlem,
+				mlem_bool(array.packedv.value_bool[i++]));
+	else
+		while (i < array.packedv.len)
+			print_type_value(mlem, mlem_raw_value(array.packedv.element_type,
+					(uint64_t)array.packedv.value_ptr[i++]));
 	mlem->depth--;
 }
 /*

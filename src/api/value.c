@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <stdarg.h>
-#include <stdio.h>
 
 #include "mlem.h"
 
@@ -27,7 +26,6 @@ bool
 	va_list		va;
 	uint32_t	i;
 
-	value = mlem_dereference(value);
 	i = 0;
 	va_start(va, count);
 	while (i < count)
@@ -46,10 +44,10 @@ bool
 bool
 	mlem_equal(t_mlem_value value1, t_mlem_value value2)
 {
-	value1 = mlem_dereference(value1);
-	value2 = mlem_dereference(value2);
 	if (value1.type != value2.type)
 		return (false);
+	if (value1.type == MLEM_TYPE_BOOL)
+		return (value1.boolv.value == value2.boolv.value);
 	if (value1.type == MLEM_TYPE_FLOAT
 		&& value1.floatv.value == value2.floatv.value)
 		return (true);

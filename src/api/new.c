@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include ".mlem_values.h"
 #include "mlem.h"
 #include "extras.h"
 
@@ -49,23 +50,44 @@ t_mlem_value
 }
 
 t_mlem_value
-	mlem_string(t_mlem_string value)
+	mlem_string_ex(t_mlem_string value, uint32_t len, uint8_t flavor)
 {
 	return ((t_mlem_value){
 		.strv = {
 			.type = MLEM_TYPE_STRING,
-			.flavor = MLEM_STR_DQUOTED,
+			.flavor = flavor,
 			.extra_capacity = 0,
-			.len = mlem_strlen(value),
+			.len = len,
 			.value = value
 		}
 	});
 }
 
 t_mlem_value
-	mlem_null(void)
+	mlem_string(t_mlem_string value)
 {
-	return ((t_mlem_value){
-		.type = MLEM_TYPE_NULL
-	});
+	uint32_t	len;
+	uint8_t		flavor;
+
+	if (!value[0])
+		return (mlem_string_ex(value, 0, MLEM_STR_DQUOTED));
+	if ((value[0] < 'a' || value[0] > 'z')
+		&& (value[0] < 'A' || value[0] > 'Z')
+		&& value[0] != '_')
+		flavor = MLEM_STR_DQUOTED;
+	else
+		flavor = MLEM_STR_UNQUOTED;
+	len = 1;
+	while (value[len] && flavor == MLEM_STR_UNQUOTED)
+	{
+		if ((value[len] < 'a' || value[len] > 'z')
+			&& (value[len] < 'A' || value[len] > 'Z')
+			&& (value[len] < '0' || value[len] > '9')
+			&& value[len] != '_')
+			flavor = MLEM_STR_DQUOTED;
+		len++;
+	}
+	while (value[len])
+		len++;
+	return (mlem_string_ex(value, len, flavor));
 }

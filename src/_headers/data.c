@@ -79,49 +79,62 @@ const struct s_mlem_data			g_mlem_data = {
 	.type = TKN_ASSIGN, .len = 1,
 }, {
 	.type = TKN_OPEN, .len = 1,
-	.data = TRG_OPEN_STRUCTURE
+	.data = TRGDATA_STRUCTURE
+}, {
+	.type = TKN_OPEN,
+	.value = "|[", .len = 2,
+	.data = TRGDATA_ARRAY
+}, {
+	.type = TKN_OPEN,
+	.value = "[*", .len = 2,
+	.data = TRGDATA_PACKED_ARRAY
+}, {
+	.type = TKN_OPEN,
+	.value = "|[*", .len = 3,
+	.data = TRGDATA_PACKED_ARRAY
 }, {
 	.type = TKN_OPEN, .len = 1,
-	.data = TRG_OPEN_ARRAY
+	.data = TRGDATA_OBJECT
 }, {
 	.type = TKN_OPEN, .len = 1,
-	.data = TRG_OPEN_OBJECT
-}, {
-	.type = TKN_OPEN, .len = 1,
-	.data = TRG_OPEN_TEMPLATE
+	.data = TRGDATA_TEMPLATE
 }, {
 	.type = TKN_CLOSE, .len = 1,
-	.data = TRG_OPEN_STRUCTURE
+	.data = TRGDATA_STRUCTURE | TRGDATA_ARRAY | TRGDATA_PACKED_ARRAY
+}, {
+	.type = TKN_CLOSE,
+	.value = "]|", .len = 2,
+	.data = TRGDATA_ARRAY | TRGDATA_PACKED_ARRAY
 }, {
 	.type = TKN_CLOSE, .len = 1,
-	.data = TRG_OPEN_ARRAY
+	.data = TRGDATA_OBJECT
 }, {
 	.type = TKN_CLOSE, .len = 1,
-	.data = TRG_OPEN_OBJECT
-}, {
-	.type = TKN_CLOSE, .len = 1,
-	.data = TRG_OPEN_TEMPLATE
-},
+	.data = TRGDATA_TEMPLATE
+}
 }, .char_data.tokens = {
 {TRG_EOF},														// \0
-{TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE},	// \x01-\x04
-{TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE},	// \x05-\x08
+{TRG_UNEXPECTED}, {TRG_UNEXPECTED}, {TRG_UNEXPECTED},			// \x01-\x03
+{TRG_UNEXPECTED}, {TRG_UNEXPECTED}, {TRG_UNEXPECTED},			// \x04-\x06
+{TRG_UNEXPECTED}, {TRG_UNEXPECTED},								// \x07-\x08
 {TRG_SKIP},														// \t
 {TRG_NEWLINE},													// \n
 {TRG_SKIP}, {TRG_SKIP}, {TRG_SKIP},								// \v \f \r
-{TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE},	// \x0E-\x11
-{TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE},	// \x12-\x15
-{TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE},	// \x13-\x19
-{TRG_CONTINUE},													// \x1A
+{TRG_UNEXPECTED}, {TRG_UNEXPECTED}, {TRG_UNEXPECTED},			// \x0E-\x10
+{TRG_UNEXPECTED}, {TRG_UNEXPECTED}, {TRG_UNEXPECTED},			// \x11-\x13
+{TRG_UNEXPECTED}, {TRG_UNEXPECTED},	{TRG_UNEXPECTED},			// \x14-\x16
+{TRG_UNEXPECTED}, {TRG_UNEXPECTED}, {TRG_UNEXPECTED},			// \x17-\x19
+{TRG_UNEXPECTED},												// \x1A
 {TRG_WORD},														// ESC
-{TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE},	// \x1C-\x1F
+{TRG_UNEXPECTED}, {TRG_UNEXPECTED}, {TRG_UNEXPECTED},			// \x1C-\x1E
+{TRG_UNEXPECTED},												// \x1F
 {TRG_SKIP},														// SPACE
-{TRG_CONTINUE},													// !
+{TRG_UNEXPECTED},												// !
 {TRG_3DQ_STRING, TRG_DQ_STRING},								// "
 {TRG_REFERENCE},												// #
-{TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE},					// $ % &
+{TRG_UNEXPECTED}, {TRG_UNEXPECTED}, {TRG_UNEXPECTED},			// $ % &
 {TRG_3Q_STRING, TRG_Q_STRING},									// '
-{TRG_CONTINUE}, {TRG_CONTINUE}, {TRG_CONTINUE},					// ( ) *
+{TRG_UNEXPECTED}, {TRG_UNEXPECTED}, {TRG_UNEXPECTED},			// ( ) *
 {TRG_NUMBER},													// +
 {TRG_SKIP},														// ,
 {TRG_NUMBER}, {TRG_NUMBER},										// - .
@@ -130,11 +143,11 @@ const struct s_mlem_data			g_mlem_data = {
 {TRG_NUMBER}, {TRG_NUMBER},	{TRG_NUMBER}, {TRG_NUMBER},			// 4-7
 {TRG_NUMBER}, {TRG_NUMBER},										// 8-9
 {TRG_ASSIGN},													// :
-{TRG_CONTINUE},													// ;
+{TRG_UNEXPECTED},												// ;
 {TRG_OPEN_TEMPLATE},											// <
 {TRG_ASSIGN},													// =
 {TRG_CLOSE_TEMPLATE},											// >
-{TRG_CONTINUE},													// ?
+{TRG_UNEXPECTED},												// ?
 {TRG_UNEXPECTED},												// @
 {TRG_WORD},	{TRG_WORD}, {TRG_WORD}, {TRG_WORD}, {TRG_WORD},		// A-E
 {TRG_WORD},	{TRG_WORD}, {TRG_WORD}, {TRG_WORD}, {TRG_WORD},		// F-J
@@ -142,12 +155,12 @@ const struct s_mlem_data			g_mlem_data = {
 {TRG_WORD},	{TRG_WORD}, {TRG_WORD}, {TRG_WORD}, {TRG_WORD},		// P-T
 {TRG_WORD},	{TRG_WORD}, {TRG_WORD}, {TRG_WORD}, {TRG_WORD},		// U-Y
 {TRG_WORD},														// Z
-{TRG_OPEN_STRUCTURE},											// [
+{TRG_OPEN_PACKED_ARRAY, TRG_OPEN_STRUCTURE},					// [
 {TRG_BACKSLASH},												// BACKSLASH
-{TRG_CLOSE_STRUCTURE},											// ]
-{TRG_CONTINUE},													// ^
+{TRG_CLOSE_ARRAY, TRG_CLOSE_STRUCTURE},							// ]
+{TRG_UNEXPECTED},												// ^
 {TRG_WORD},														// _
-{TRG_CONTINUE},													// `
+{TRG_UNEXPECTED},												// `
 {TRG_WORD},	{TRG_WORD}, {TRG_WORD}, {TRG_WORD}, {TRG_WORD},		// a-e
 {TRG_WORD},	{TRG_WORD}, {TRG_WORD}, {TRG_WORD}, {TRG_WORD},		// f-j
 {TRG_WORD},	{TRG_WORD}, {TRG_WORD}, {TRG_WORD}, {TRG_WORD},		// k-o
@@ -155,9 +168,9 @@ const struct s_mlem_data			g_mlem_data = {
 {TRG_WORD},	{TRG_WORD}, {TRG_WORD}, {TRG_WORD}, {TRG_WORD},		// u-y
 {TRG_WORD},														// z
 {TRG_OPEN_OBJECT},												// {
-{TRG_CONTINUE},													// |
+{TRG_P_OPEN_PACKED_ARRAY, TRG_OPEN_ARRAY, TRG_UNEXPECTED},		// |
 {TRG_CLOSE_OBJECT},												// }
-{TRG_CONTINUE}, {TRG_CONTINUE},									// ~ DEL
+{TRG_UNEXPECTED}, {TRG_UNEXPECTED},								// ~ DEL
 }, .constants = {
 {0}, {
 {.name = "Inf",		.value = {
@@ -364,9 +377,15 @@ const char							*g_error_messages[][2] = {
 {"Numeric value reached infinity", "Use INF and -INF to get infinity"},
 {"Empty value exponent"},
 {"Invalid value exponent"},
+{"Packed array cannot be empty"},
+{"Value cannot be contained in a packed array",
+	"Packed arrays can only contain numbers, booleans, strings and references"},
+{"Value type doesn't match packed array"},
+{"Value type doesn't match packed array",
+	"The first array value must be explictely set to a float"},
 {"Undefined reference"},
 {"Reference already exists locally",
-	"A reference cannot be overriden during parsing"},
+	"A reference cannot be overriden"},
 {"Reference refers to itself"},
 {"Reference recursion limit reached", "The limit is 255"},
 {"Template flag is already set"},

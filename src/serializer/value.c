@@ -124,7 +124,7 @@ bool
 	else if (value.type == MLEM_TYPE_NONE)
 	{
 		print_tab(mlem);
-		fwrite("Error: ", 6, 1, mlem->file);
+		fwrite("Error: ", 7, 1, mlem->file);
 		fputs(g_error_messages[value.intv.value][0], mlem->file);
 		fputc('\n', mlem->file);
 	}

@@ -73,10 +73,39 @@ void
 print_array(t_mlem_serializer *mlem, t_mlem_value array);
 
 void
+print_packed_array(t_mlem_serializer *mlem, t_mlem_value array);
+
+void
 print_subtemplate(t_mlem_serializer *mlem, t_mlem_subtemplate subtemplate);
 
 void
 print_template(t_mlem_serializer *mlem, t_mlem_value template);
+
+// DESTROY
+
+void
+destroy_reference(t_mlem_value reference,
+	bool free_keys, bool free_strings, bool free_ref_names);
+
+void
+destroy_array(t_mlem_value array,
+	bool free_keys, bool free_strings, bool free_ref_names);
+
+void
+destroy_packed_array(t_mlem_value array,
+	bool free_keys, bool free_strings, bool free_ref_names);
+
+void
+destroy_object(t_mlem_value object,
+	bool free_keys, bool free_strings, bool free_ref_names);
+
+// TYPES
+
+bool
+is_valid_packed_type(t_mlem_value_type type);
+
+size_t
+get_type_size(t_mlem_value_type type);
 
 // MATCHING
 

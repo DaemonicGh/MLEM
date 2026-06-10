@@ -36,3 +36,11 @@ t_mlem_value
 		}
 	});
 }
+
+t_mlem_value
+	mlem_null(void)
+{
+	return ((t_mlem_value){
+		.type = MLEM_TYPE_NULL
+	});
+}

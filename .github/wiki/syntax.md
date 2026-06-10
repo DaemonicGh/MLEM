@@ -33,6 +33,35 @@ More details on this later.
 
 ---
 
+# Core details
+
+Any part of the file that holds some significance is called a **token**.
+
+MLEM uses three ways to define tokens:
+- Symbols
+- Delimited values
+- Plain text values
+
+**Symbols** are special characters/sequences of characters that acts on their own, without any surrounding value.\
+(for example `[` or `=`)\
+**Delimited values** are values surrounded by a pair of delimiter characters.\
+(for example `"Hello"` or `//Blah blah`)\
+**Plain text values** are values that are not surrounded by any delimiter characters.\
+(for example `42`)
+
+Any token in MLEM can be separated by **separator characters**\
+They can be used in any amount and in any combination.\
+Separator characters include:
+- Spaces (` `),
+- Newlines (`\n`),
+- Tabs (`\t`)
+- Other whitespace characters (`\r`, `\f`, `\v`)
+- Commas (`,`)
+
+They are only required to separate **plain text values**.\
+
+---
+
 # Values
 
 ---
@@ -43,7 +72,7 @@ MLEM has a few string formats to choose from. Here's a quick overview:
 
 | String Format | Example | Multiline | Supports Escaping |
 | --- | --- | --- | --- |
-| Plain text | `Hello, World!` | No | Yes |
+| Plain text | `Hello!` | No | Yes |
 | Single quoted | `'Hello, World!'` | No | Yes |
 | Double quoted | `"Hello, World!"` | Yes | Yes |
 | Triple quoted  | `'''Hello, World!'''` or `"""Hello, World!"""` | Yes | No |
@@ -56,7 +85,7 @@ If a single quoted string encounters a newline before its closing quote, an erro
 ### Plain text strings
 
 To be considered a plain text string, A value must start with an alphabetic character (`a`-`z` `A`-`Z`) or an underscore (`_`).
-A plain text string ends as soon as it encounters a space character or a sequence that could be interpreted as another value,
+A plain text string ends as soon as it encounters a separator character or a sequence that could be interpreted as another value,
 such as quotes or brackets, with an exception for numbers and constant values.
 
 Here are some examples of valid plain text strings in MLEM:
@@ -84,7 +113,7 @@ As a good practice, a string that contains symbols or spaces should be enclosed 
 Strings that support escaping will transform escape sequences into their corresponding characters.\
 MLEM currently supports C `\n \t \e ...` and hexadecimal `\x` escape sequences.\
 \
-Backslashes can also be used in unquoted strings to force a character in.\
+Backslashes can also be used in unquoted strings to force a character in. Regardless of its role in the MLEM syntax\
 \
 In quoted strings, an unrecognized escape sequence will raise an error.
 
@@ -96,10 +125,10 @@ Spaced\ unquoted\ string
 "Hello,\nWorld!"
 'Backslash: \\'
 
-'''
+"""
 This won't become a newline -> \n
-because it's in a triple quoted string
-'''
+because it is in a triple quoted string
+"""
 ```
 
 ---
@@ -154,7 +183,7 @@ MLEM supports the following base descriptors:
 
 Floats are numbers with either a decimal part or an exponent.
 
-Floats follows the same basic rules as integers,\
+Floats follows the same basic rules as integers.\
 They allow a starting `+` or `-` sign and underscore characters (`_`) to separate digits.\
 However, floats only support base-10 numbers.
 
@@ -166,7 +195,7 @@ Note that it isn't perfect and may not catch small losses.
 Floats can start or end with a decimal point `.` without any digits before or after.
 
 Floats support scientific notation using `e`(case-insensitive) as the exponent separator.\
-Floats with an exponent will be multiplied by `10` raised to the power of the exponent value,\
+Floats with an exponent will be multiplied by `10` raised to the power of the exponent value,
 with negative exponents performing a division rather than a multiplication.\
 The exponent value must be a base-10 integer.
 Floats with an exponent do not require a decimal point.
@@ -180,11 +209,24 @@ Floats with an exponent do not require a decimal point.
 
 ---
 
-## Wiki under construction, sorry for the inconvenience.
-
 ## Arrays
 
-...
+MLEM arrays starts with `[` and ends with `]`.\
+Any value within thoses brackets is a value in the array.
+
+Arrays can hold any kind of value, a single array can hold values with different types.\
+The order of the values in an array is preserved.
+
+```mlem
+[1 2 3]
+[ 4, 5, 6 ]
+[
+	7
+	8
+	9
+]
+[Hello World 4 true]
+```
 
 ---
 

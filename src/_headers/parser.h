@@ -144,6 +144,10 @@ t_mlem_value
 get_array(t_mlem_parser *mlem, t_mlem_token *token, t_mlem_string key);
 
 t_mlem_value
+get_packed_array(
+	t_mlem_parser *mlem, t_mlem_token *trigger, t_mlem_string key);
+
+t_mlem_value
 get_object(t_mlem_parser *mlem, t_mlem_token *token, t_mlem_string key);
 
 bool
