@@ -24,11 +24,11 @@ size_t	get_type_size(t_mlem_value_type type)
 {
 	if (!type || type == MLEM_TYPE_NULL)
 		return (0);
-	if (type == MLEM_TYPE_BOOL)
-		return (sizeof(t_mlem_bool));
 	if (type == MLEM_TYPE_INT)
 		return (sizeof(t_mlem_int));
 	if (type == MLEM_TYPE_FLOAT)
 		return (sizeof(t_mlem_float));
+	if (type == MLEM_TYPE_BOOL)
+		return (sizeof(t_mlem_bool));
 	return (sizeof(void *));
 }

@@ -201,6 +201,17 @@ typedef struct s_mlem_template_value
 }	t_mlem_template_value;
 
 /**
+ * MLEM null value.
+ *
+ * Do not confuse a null value with
+ * an absent/none type value, which signifies an error.
+ */
+typedef struct s_mlem_null_value
+{
+	t_mlem_value_type	type;
+}	t_mlem_null_value;
+
+/**
  * MLEM pointer value.
  *
  * This value is not used by MLEM, and exists for user convenience.

@@ -36,24 +36,21 @@ int64_t
 	if (!mlem_tweak(&value, array.packedv.element_type))
 		return (-1);
 	i = 0;
-	if (value.type == MLEM_TYPE_BOOL)
-	{
-		while (i < array.packedv.len)
-		{
-			if (array.packedv.value_bool[i] == value.boolv.value)
-				return (i);
+	if (value.type == MLEM_TYPE_FLOAT)
+		while (i < array.packedv.len
+			&& (array.packedv.value_float[i] == value.floatv.value
+				|| array.packedv.value_int[i] == value.intv.value))
 			i++;
-		}
-		return (-1);
-	}
-	while (i < array.packedv.len)
-	{
-		if ((value.type == MLEM_TYPE_FLOAT
-				&& array.packedv.value_float[i] == value.floatv.value)
-			|| array.packedv.value_int[i] == value.intv.value)
-			return (i);
-		i++;
-	}
+	else if (value.type == MLEM_TYPE_BOOL)
+		while (i < array.packedv.len
+			&& array.packedv.value_bool[i] != value.boolv.value)
+			i++;
+	else
+		while (i < array.packedv.len
+			&& array.packedv.value_int[i] == value.intv.value)
+			i++;
+	if (i < array.packedv.len)
+		return (i);
 	return (-1);
 }
 

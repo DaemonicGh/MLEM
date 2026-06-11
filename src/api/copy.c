@@ -12,6 +12,7 @@
 
 #include <stdlib.h>
 
+#include ".mlem_values.h"
 #include "extras.h"
 
 static t_mlem_value
@@ -32,6 +33,51 @@ static t_mlem_value
 			return ((t_mlem_value){0});
 		}
 		new.arrayv.len++;
+	}
+	return (new);
+}
+
+static t_mlem_value
+	copy_packed_string_array(t_mlem_value array, t_mlem_value *new)
+{
+	while (new->packedv.len < array.packedv.len)
+	{
+		new->packedv.value_str[new->packedv.len] = mlem_strdup(
+				array.packedv.value_str[new->packedv.len]);
+		if (!new->packedv.value_str[new->packedv.len])
+		{
+			mlem_destroy(*new);
+			return ((t_mlem_value){0});
+		}
+		new->packedv.len++;
+	}
+	return (*new);
+}
+
+static t_mlem_value
+	copy_packed_array(t_mlem_value array)
+{
+	t_mlem_value	new;
+	size_t			i;
+
+	new = mlem_packed_array_empty(
+			array.packedv.element_type, array.packedv.len);
+	if (!new.type)
+		return ((t_mlem_value){0});
+	if (new.type == MLEM_TYPE_STRING)
+		return (copy_packed_string_array(array, &new));
+	new.packedv.len = array.packedv.len;
+	i = 0;
+	while (i < array.packedv.len)
+	{
+		new.packedv.value_ref[i] = array.packedv.value_ref[i];
+		i++;
+	}
+	if (new.type == MLEM_TYPE_REFERENCE)
+	{
+		i = 0;
+		while (i < array.packedv.len)
+			new.packedv.value_ref[i++]->ref_count += 1;
 	}
 	return (new);
 }
@@ -123,6 +169,8 @@ t_mlem_value
 	}
 	else if (value.type == MLEM_TYPE_ARRAY)
 		return (copy_array(value));
+	else if (value.type == MLEM_TYPE_PACKED_ARRAY)
+		return (copy_packed_array(value));
 	else if (value.type == MLEM_TYPE_OBJECT)
 		return (copy_object(value));
 	return (value);
