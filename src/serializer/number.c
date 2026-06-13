@@ -101,10 +101,13 @@ void
 {
 	fix_float_exponent(&value);
 	print_tab(mlem);
-	if ((long)value.floatv.value || value.floatv.value == 0)
-		fprintf(mlem->file, "%zi", (long)value.floatv.value);
 	if (value.floatv.value < 0)
+	{
+		fputc('-', mlem->file);
 		value.floatv.value = -value.floatv.value;
+	}
+	if ((uint64_t)value.floatv.value || value.floatv.value == 0)
+		fprintf(mlem->file, "%zu", (uint64_t)value.floatv.value);
 	value.floatv.value = fmod(value.floatv.value, 1);
 	if (value.floatv.value || value.floatv.exponent == 0)
 		fputc('.', mlem->file);
